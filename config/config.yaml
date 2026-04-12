@@ -1,0 +1,8 @@
+iekf_slam_node:
+  ros__parameters:
+    imu_topic: "/imu0"
+    lidar_topic: "/livox/lidar"
+    imu_buffer_size: 20000
+    reflectivity_filter.enable: true
+    reflectivity_filter.min: 1
+    reflectivity_filter.max: 255
