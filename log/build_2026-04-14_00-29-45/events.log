@@ -1,0 +1,154 @@
+[0.000000] (-) TimerEvent: {}
+[0.000124] (iekf_lio) JobQueued: {'identifier': 'iekf_lio', 'dependencies': OrderedDict()}
+[0.000145] (iekf_lio) JobStarted: {'identifier': 'iekf_lio'}
+[0.009521] (iekf_lio) JobProgress: {'identifier': 'iekf_lio', 'progress': 'cmake'}
+[0.010546] (iekf_lio) JobProgress: {'identifier': 'iekf_lio', 'progress': 'build'}
+[0.011391] (iekf_lio) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', '--', '-j20', '-l20'], 'cwd': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'env': OrderedDict({'PYTHON_BASIC_REPL': '1', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'yyj', 'GIT_ASKPASS': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/yyj', 'TERM_PROGRAM_VERSION': '1.115.0', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-b2c3bf89-b8e8-4148-830a-21baa6a68d1e.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/node', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'WSL_DISTRO_NAME': 'Ubuntu', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/yyj/IEKF_LIO_node/src/iekf_lio/install:/home/yyj/livox_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'yyj', 'NAME': 'Code', 'WSL_INTEROP': '/run/WSL/766_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/e/Git/cmd:/mnt/c/Users/11760/AppData/Local/Microsoft/WindowsApps:/mnt/e/Microsoft VS Code/bin:/mnt/e/WorkBuddy/bin:/snap/bin:/home/yyj/.fishros/bin/:/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/scripts/noConfigScripts:/home/yyj/.fishros/bin/', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/.noConfigDebugAdapterEndpoints/endpoint-3d68f1ea0c87f7a4.txt', 'LANG': 'C.UTF-8', 'PYTHONSTARTUP': '/home/yyj/.vscode-server/data/User/workspaceStorage/cadb4e8c734c8c4438e30ba9fccc0cdb/ms-python.python/pythonrc.py', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-31c233c082.sock', 'TERM_PROGRAM': 'vscode', 'AMENT_PREFIX_PATH': '/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio:/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio:/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy', 'WSLENV': 'ELECTRON_RUN_AS_NODE/w:'}), 'shell': False}
+[0.099250] (-) TimerEvent: {}
+[0.109809] (iekf_lio) StdoutLine: {'line': b'[ 16%] Built target test_build_node\n'}
+[0.110234] (iekf_lio) StdoutLine: {'line': b'[ 33%] Built target livox_sub_test\n'}
+[0.116487] (iekf_lio) StdoutLine: {'line': b'[ 41%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf_slam_node.cpp.o\x1b[0m\n'}
+[0.199404] (-) TimerEvent: {}
+[0.299780] (-) TimerEvent: {}
+[0.400033] (-) TimerEvent: {}
+[0.500294] (-) TimerEvent: {}
+[0.600586] (-) TimerEvent: {}
+[0.700884] (-) TimerEvent: {}
+[0.801139] (-) TimerEvent: {}
+[0.901402] (-) TimerEvent: {}
+[1.001665] (-) TimerEvent: {}
+[1.102026] (-) TimerEvent: {}
+[1.202372] (-) TimerEvent: {}
+[1.302684] (-) TimerEvent: {}
+[1.402963] (-) TimerEvent: {}
+[1.503322] (-) TimerEvent: {}
+[1.603664] (-) TimerEvent: {}
+[1.703918] (-) TimerEvent: {}
+[1.804208] (-) TimerEvent: {}
+[1.904503] (-) TimerEvent: {}
+[2.004809] (-) TimerEvent: {}
+[2.105160] (-) TimerEvent: {}
+[2.205573] (-) TimerEvent: {}
+[2.305920] (-) TimerEvent: {}
+[2.406203] (-) TimerEvent: {}
+[2.506513] (-) TimerEvent: {}
+[2.606796] (-) TimerEvent: {}
+[2.707088] (-) TimerEvent: {}
+[2.807432] (-) TimerEvent: {}
+[2.907831] (-) TimerEvent: {}
+[3.008106] (-) TimerEvent: {}
+[3.108379] (-) TimerEvent: {}
+[3.208663] (-) TimerEvent: {}
+[3.309006] (-) TimerEvent: {}
+[3.409304] (-) TimerEvent: {}
+[3.509634] (-) TimerEvent: {}
+[3.610003] (-) TimerEvent: {}
+[3.710317] (-) TimerEvent: {}
+[3.810625] (-) TimerEvent: {}
+[3.911087] (-) TimerEvent: {}
+[4.011577] (-) TimerEvent: {}
+[4.111859] (-) TimerEvent: {}
+[4.212351] (-) TimerEvent: {}
+[4.312780] (-) TimerEvent: {}
+[4.413066] (-) TimerEvent: {}
+[4.513359] (-) TimerEvent: {}
+[4.613721] (-) TimerEvent: {}
+[4.714042] (-) TimerEvent: {}
+[4.814395] (-) TimerEvent: {}
+[4.914730] (-) TimerEvent: {}
+[5.015128] (-) TimerEvent: {}
+[5.115478] (-) TimerEvent: {}
+[5.215736] (-) TimerEvent: {}
+[5.316018] (-) TimerEvent: {}
+[5.416428] (-) TimerEvent: {}
+[5.516747] (-) TimerEvent: {}
+[5.617026] (-) TimerEvent: {}
+[5.717321] (-) TimerEvent: {}
+[5.817687] (-) TimerEvent: {}
+[5.917963] (-) TimerEvent: {}
+[6.018228] (-) TimerEvent: {}
+[6.118563] (-) TimerEvent: {}
+[6.220901] (-) TimerEvent: {}
+[6.324264] (-) TimerEvent: {}
+[6.427114] (-) TimerEvent: {}
+[6.529389] (-) TimerEvent: {}
+[6.632763] (-) TimerEvent: {}
+[6.736186] (-) TimerEvent: {}
+[6.839478] (-) TimerEvent: {}
+[6.942938] (-) TimerEvent: {}
+[7.046205] (-) TimerEvent: {}
+[7.149600] (-) TimerEvent: {}
+[7.251827] (-) TimerEvent: {}
+[7.352246] (-) TimerEvent: {}
+[7.454539] (-) TimerEvent: {}
+[7.556916] (-) TimerEvent: {}
+[7.658001] (-) TimerEvent: {}
+[7.758969] (-) TimerEvent: {}
+[7.861316] (-) TimerEvent: {}
+[7.962986] (-) TimerEvent: {}
+[8.066996] (-) TimerEvent: {}
+[8.167332] (-) TimerEvent: {}
+[8.271397] (-) TimerEvent: {}
+[8.372712] (-) TimerEvent: {}
+[8.474702] (-) TimerEvent: {}
+[8.576171] (-) TimerEvent: {}
+[8.678466] (-) TimerEvent: {}
+[8.778801] (-) TimerEvent: {}
+[8.881899] (-) TimerEvent: {}
+[8.983629] (-) TimerEvent: {}
+[9.086533] (-) TimerEvent: {}
+[9.188444] (-) TimerEvent: {}
+[9.293552] (-) TimerEvent: {}
+[9.394050] (-) TimerEvent: {}
+[9.497144] (-) TimerEvent: {}
+[9.603065] (-) TimerEvent: {}
+[9.708819] (-) TimerEvent: {}
+[9.811390] (-) TimerEvent: {}
+[9.917153] (-) TimerEvent: {}
+[10.022906] (-) TimerEvent: {}
+[10.123241] (-) TimerEvent: {}
+[10.224075] (-) TimerEvent: {}
+[10.324810] (-) TimerEvent: {}
+[10.379932] (iekf_lio) StdoutLine: {'line': b'[ 50%] \x1b[32m\x1b[1mLinking CXX executable iekf_slam_node\x1b[0m\n'}
+[10.427225] (-) TimerEvent: {}
+[10.527572] (-) TimerEvent: {}
+[10.629284] (-) TimerEvent: {}
+[10.731093] (-) TimerEvent: {}
+[10.835754] (-) TimerEvent: {}
+[10.937519] (-) TimerEvent: {}
+[11.042375] (-) TimerEvent: {}
+[11.147355] (-) TimerEvent: {}
+[11.250655] (-) TimerEvent: {}
+[11.354608] (-) TimerEvent: {}
+[11.455446] (-) TimerEvent: {}
+[11.556019] (-) TimerEvent: {}
+[11.656443] (-) TimerEvent: {}
+[11.758581] (-) TimerEvent: {}
+[11.863185] (-) TimerEvent: {}
+[11.874614] (iekf_lio) StdoutLine: {'line': b'[100%] Built target iekf_slam_node\n'}
+[11.883586] (iekf_lio) CommandEnded: {'returncode': 0}
+[11.884943] (iekf_lio) JobProgress: {'identifier': 'iekf_lio', 'progress': 'install'}
+[11.891863] (iekf_lio) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio'], 'cwd': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'env': OrderedDict({'PYTHON_BASIC_REPL': '1', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'yyj', 'GIT_ASKPASS': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/yyj', 'TERM_PROGRAM_VERSION': '1.115.0', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-b2c3bf89-b8e8-4148-830a-21baa6a68d1e.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/node', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'WSL_DISTRO_NAME': 'Ubuntu', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/yyj/IEKF_LIO_node/src/iekf_lio/install:/home/yyj/livox_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'yyj', 'NAME': 'Code', 'WSL_INTEROP': '/run/WSL/766_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/e/Git/cmd:/mnt/c/Users/11760/AppData/Local/Microsoft/WindowsApps:/mnt/e/Microsoft VS Code/bin:/mnt/e/WorkBuddy/bin:/snap/bin:/home/yyj/.fishros/bin/:/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/scripts/noConfigScripts:/home/yyj/.fishros/bin/', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/.noConfigDebugAdapterEndpoints/endpoint-3d68f1ea0c87f7a4.txt', 'LANG': 'C.UTF-8', 'PYTHONSTARTUP': '/home/yyj/.vscode-server/data/User/workspaceStorage/cadb4e8c734c8c4438e30ba9fccc0cdb/ms-python.python/pythonrc.py', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-31c233c082.sock', 'TERM_PROGRAM': 'vscode', 'AMENT_PREFIX_PATH': '/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio:/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio:/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy', 'WSLENV': 'ELECTRON_RUN_AS_NODE/w:'}), 'shell': False}
+[11.898509] (iekf_lio) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[11.899767] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node\n'}
+[11.911069] (iekf_lio) StdoutLine: {'line': b'-- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node" to ""\n'}
+[11.911810] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node\n'}
+[11.913761] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test\n'}
+[11.913847] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/package_run_dependencies/iekf_lio\n'}
+[11.914100] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/parent_prefix_path/iekf_lio\n'}
+[11.914247] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.sh\n'}
+[11.914355] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.dsv\n'}
+[11.914427] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.sh\n'}
+[11.914539] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.dsv\n'}
+[11.914881] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.bash\n'}
+[11.914952] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.sh\n'}
+[11.914997] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.zsh\n'}
+[11.915038] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.dsv\n'}
+[11.915076] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.dsv\n'}
+[11.915185] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/packages/iekf_lio\n'}
+[11.915274] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig.cmake\n'}
+[11.915357] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig-version.cmake\n'}
+[11.915403] (iekf_lio) StdoutLine: {'line': b'-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.xml\n'}
+[11.916166] (iekf_lio) CommandEnded: {'returncode': 0}
+[11.934546] (iekf_lio) JobEnded: {'identifier': 'iekf_lio', 'rc': 0}
+[11.935449] (-) EventReactorShutdown: {}

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include "iekf/iekf_state.hpp"
 #include "imu/imu_types.hpp"
+#include "lidar/cloud_deskewer.hpp"
 
 namespace iekf_lio
 {
@@ -21,7 +24,10 @@ public:
   explicit IekfPredictor(IekfPredictorNoise noise = {}) : noise_(noise) {}
 
   void initializeState(IekfState18 & state) const;
-  void predictWithMidpoint(const ImuTrack & imu_track, IekfState18 & state) const;
+  void predictWithMidpoint(
+    const ImuTrack & imu_track,
+    IekfState18 & state,
+    std::vector<ImuPredictedState> * predicted_states = nullptr) const;
 
 private:
   IekfPredictorNoise noise_;

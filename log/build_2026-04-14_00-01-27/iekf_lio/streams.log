@@ -1,0 +1,160 @@
+[0.007s] Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/yyj/IEKF_LIO_node/src/iekf_lio -DCMAKE_INSTALL_PREFIX=/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio
+[0.159s] -- The C compiler identification is GNU 13.3.0
+[0.628s] -- The CXX compiler identification is GNU 13.3.0
+[0.988s] -- Detecting C compiler ABI info
+[1.189s] -- Detecting C compiler ABI info - done
+[1.195s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.196s] -- Detecting C compile features
+[1.196s] -- Detecting C compile features - done
+[1.258s] -- Detecting CXX compiler ABI info
+[1.454s] -- Detecting CXX compiler ABI info - done
+[1.461s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.462s] -- Detecting CXX compile features
+[1.462s] -- Detecting CXX compile features - done
+[1.479s] -- Found ament_cmake: 2.5.5 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[1.599s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.703s] -- Found rclcpp: 28.1.16 (/opt/ros/jazzy/share/rclcpp/cmake)
+[1.857s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[1.870s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[1.895s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.927s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.016s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[2.019s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[2.095s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[2.199s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[2.264s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[2.453s] -- Found sensor_msgs: 5.3.6 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[2.545s] -- Found nav_msgs: 5.3.6 (/opt/ros/jazzy/share/nav_msgs/cmake)
+[2.593s] -- Found tf2: 0.36.19 (/opt/ros/jazzy/share/tf2/cmake)
+[2.603s] -- Found tf2_ros: 0.36.19 (/opt/ros/jazzy/share/tf2_ros/cmake)
+[2.786s] -- Found pcl_conversions: 2.6.2 (/opt/ros/jazzy/share/pcl_conversions/cmake)
+[2.863s] [33mCMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/Modules/FindFLANN.cmake:45 (find_package):
+[2.863s]   Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+[2.863s]   variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+[2.863s]   cmake_policy command to set the policy and suppress this warning.
+[2.863s] 
+[2.863s]   CMake variable FLANN_ROOT is set to:
+[2.863s] 
+[2.863s]     /usr
+[2.863s] 
+[2.863s]   For compatibility, find_package is ignoring the variable, but code in a
+[2.863s]   .cmake module might still use it.
+[2.863s] Call Stack (most recent call first):
+[2.863s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:261 (find_package)
+[2.864s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:306 (find_flann)
+[2.864s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:570 (find_external_library)
+[2.864s]   /opt/ros/jazzy/share/pcl_conversions/cmake/ament_cmake_export_dependencies-extras.cmake:21 (find_package)
+[2.864s]   /opt/ros/jazzy/share/pcl_conversions/cmake/pcl_conversionsConfig.cmake:41 (include)
+[2.864s]   CMakeLists.txt:16 (find_package)
+[2.864s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[2.864s] [0m
+[2.866s] -- Found flann version 1.9.2
+[3.304s] -- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+[3.304s] -- Found OpenMP: TRUE (found version "4.5") found components: CXX 
+[12.830s] -- Checking for module 'libusb-1.0'
+[12.841s] --   Found libusb-1.0, version 1.0.27
+[12.926s] -- Found libusb: /usr/lib/x86_64-linux-gnu/libusb-1.0.so  
+[12.928s] -- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)
+[13.110s] -- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)
+[13.203s] -- Could NOT find Pcap (missing: PCAP_LIBRARIES PCAP_INCLUDE_DIRS) 
+[13.742s] -- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.3")  
+[14.185s] -- Found PNG: /usr/lib/x86_64-linux-gnu/libpng.so (found version "1.6.43") 
+[22.594s] -- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)
+[22.598s] -- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)
+[30.924s] -- Found Qhull version 8.0.2
+[39.189s] -- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)
+[47.461s] -- Found PCL_COMMON: /usr/lib/x86_64-linux-gnu/libpcl_common.so  
+[47.462s] -- Found PCL_KDTREE: /usr/lib/x86_64-linux-gnu/libpcl_kdtree.so  
+[47.463s] -- Found PCL_OCTREE: /usr/lib/x86_64-linux-gnu/libpcl_octree.so  
+[47.464s] -- Found PCL_SEARCH: /usr/lib/x86_64-linux-gnu/libpcl_search.so  
+[47.464s] -- Found PCL_SAMPLE_CONSENSUS: /usr/lib/x86_64-linux-gnu/libpcl_sample_consensus.so  
+[47.465s] -- Found PCL_FILTERS: /usr/lib/x86_64-linux-gnu/libpcl_filters.so  
+[47.465s] -- Found PCL_2D: /usr/include/pcl-1.14  
+[47.466s] -- Found PCL_GEOMETRY: /usr/include/pcl-1.14  
+[47.466s] -- Found PCL_IO: /usr/lib/x86_64-linux-gnu/libpcl_io.so  
+[47.467s] -- Found PCL_FEATURES: /usr/lib/x86_64-linux-gnu/libpcl_features.so  
+[47.468s] -- Found PCL_ML: /usr/lib/x86_64-linux-gnu/libpcl_ml.so  
+[47.468s] -- Found PCL_SEGMENTATION: /usr/lib/x86_64-linux-gnu/libpcl_segmentation.so  
+[47.469s] -- Found PCL_VISUALIZATION: /usr/lib/x86_64-linux-gnu/libpcl_visualization.so  
+[47.470s] -- Found PCL_SURFACE: /usr/lib/x86_64-linux-gnu/libpcl_surface.so  
+[47.470s] -- Found PCL_REGISTRATION: /usr/lib/x86_64-linux-gnu/libpcl_registration.so  
+[47.471s] -- Found PCL_KEYPOINTS: /usr/lib/x86_64-linux-gnu/libpcl_keypoints.so  
+[47.472s] -- Found PCL_TRACKING: /usr/lib/x86_64-linux-gnu/libpcl_tracking.so  
+[47.473s] -- Found PCL_RECOGNITION: /usr/lib/x86_64-linux-gnu/libpcl_recognition.so  
+[47.474s] -- Found PCL_STEREO: /usr/lib/x86_64-linux-gnu/libpcl_stereo.so  
+[47.474s] -- Found PCL_APPS: /usr/lib/x86_64-linux-gnu/libpcl_apps.so  
+[47.475s] -- Found PCL_IN_HAND_SCANNER: /usr/include/pcl-1.14  
+[47.475s] -- Found PCL_MODELER: /usr/include/pcl-1.14  
+[47.475s] -- Found PCL_POINT_CLOUD_EDITOR: /usr/include/pcl-1.14  
+[47.476s] -- Found PCL_OUTOFCORE: /usr/lib/x86_64-linux-gnu/libpcl_outofcore.so  
+[47.477s] -- Found PCL_PEOPLE: /usr/lib/x86_64-linux-gnu/libpcl_people.so  
+[47.479s] [33mCMake Warning (dev) at CMakeLists.txt:17 (find_package):
+[47.479s]   Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+[47.479s]   Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+[47.479s]   command to set the policy and suppress this warning.
+[47.479s] 
+[47.479s]   CMake variable PCL_ROOT is set to:
+[47.479s] 
+[47.479s]     /usr
+[47.479s] 
+[47.479s]   For compatibility, CMake is ignoring the variable.
+[47.479s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[47.479s] [0m
+[47.497s] -- Found visualization_msgs: 5.3.6 (/opt/ros/jazzy/share/visualization_msgs/cmake)
+[47.527s] -- Found livox_ros_driver2: 1.0.0 (/home/yyj/livox_ws/install/livox_ros_driver2/share/livox_ros_driver2/cmake)
+[48.701s] -- Found ament_lint_auto: 0.17.4 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[48.798s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[48.798s] -- Configured cppcheck include dirs: /home/yyj/IEKF_LIO_node/src/iekf_lio/include
+[48.798s] -- Configured cppcheck exclude dirs and/or files: 
+[48.800s] -- Added test 'flake8' to check Python code syntax and style conventions
+[48.800s] -- Configured 'flake8' exclude dirs and/or files: 
+[48.803s] -- Added test 'lint_cmake' to check CMake code style
+[48.805s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[48.815s] -- Added test 'uncrustify' to check C / C++ code style
+[48.815s] -- Configured uncrustify additional arguments: 
+[48.817s] -- Added test 'xmllint' to check XML markup files
+[48.819s] -- Configuring done (48.8s)
+[48.864s] -- Generating done (0.0s)
+[48.872s] -- Build files have been written to: /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio
+[48.890s] Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/yyj/IEKF_LIO_node/src/iekf_lio -DCMAKE_INSTALL_PREFIX=/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio
+[48.891s] Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio -- -j20 -l20
+[48.934s] [ 33%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/imu/noise_model.cpp.o[0m
+[48.934s] [ 33%] [32mBuilding CXX object CMakeFiles/test_build_node.dir/src/test_build_node.cpp.o[0m
+[48.934s] [ 33%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/imu/imu_integrator.cpp.o[0m
+[48.934s] [ 33%] [32mBuilding CXX object CMakeFiles/livox_sub_test.dir/src/livox_sub_test.cpp.o[0m
+[48.934s] [ 50%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/mapping/voxel_map.cpp.o[0m
+[48.935s] [ 50%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf_slam_node.cpp.o[0m
+[48.936s] [ 58%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf/iekf_predictor.cpp.o[0m
+[48.936s] [ 66%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/lidar/cloud_deskewer.cpp.o[0m
+[48.938s] [ 75%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf/iekf_updater.cpp.o[0m
+[52.794s] [ 83%] [32m[1mLinking CXX executable test_build_node[0m
+[53.055s] [ 83%] Built target test_build_node
+[56.191s] [ 91%] [32m[1mLinking CXX executable livox_sub_test[0m
+[56.468s] [ 91%] Built target livox_sub_test
+[61.077s] [100%] [32m[1mLinking CXX executable iekf_slam_node[0m
+[62.539s] [100%] Built target iekf_slam_node
+[62.549s] Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio -- -j20 -l20
+[62.561s] Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio
+[62.569s] -- Install configuration: ""
+[62.570s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node
+[62.582s] -- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node" to ""
+[62.582s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node
+[62.582s] -- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node" to ""
+[62.582s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test
+[62.585s] -- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test" to ""
+[62.586s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/package_run_dependencies/iekf_lio
+[62.586s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/parent_prefix_path/iekf_lio
+[62.589s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.sh
+[62.590s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.dsv
+[62.590s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.sh
+[62.590s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.dsv
+[62.591s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.bash
+[62.591s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.sh
+[62.591s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.zsh
+[62.592s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.dsv
+[62.592s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.dsv
+[62.593s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/packages/iekf_lio
+[62.593s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig.cmake
+[62.593s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig-version.cmake
+[62.594s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.xml
+[62.596s] Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio

@@ -1,0 +1,786 @@
+[0.000000] (-) TimerEvent: {}
+[0.000853] (iekf_lio) JobQueued: {'identifier': 'iekf_lio', 'dependencies': OrderedDict()}
+[0.000909] (iekf_lio) JobStarted: {'identifier': 'iekf_lio'}
+[0.006190] (iekf_lio) JobProgress: {'identifier': 'iekf_lio', 'progress': 'cmake'}
+[0.006864] (iekf_lio) Command: {'cmd': ['/usr/bin/cmake', '/home/yyj/IEKF_LIO_node/src/iekf_lio', '-DCMAKE_INSTALL_PREFIX=/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio'], 'cwd': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'env': OrderedDict({'PYTHON_BASIC_REPL': '1', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'yyj', 'GIT_ASKPASS': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/yyj', 'TERM_PROGRAM_VERSION': '1.115.0', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-b2c3bf89-b8e8-4148-830a-21baa6a68d1e.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/node', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'WSL_DISTRO_NAME': 'Ubuntu', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/yyj/livox_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'yyj', 'NAME': 'Code', 'WSL_INTEROP': '/run/WSL/766_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/e/Git/cmd:/mnt/c/Users/11760/AppData/Local/Microsoft/WindowsApps:/mnt/e/Microsoft VS Code/bin:/mnt/e/WorkBuddy/bin:/snap/bin:/home/yyj/.fishros/bin/:/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/scripts/noConfigScripts:/home/yyj/.fishros/bin/', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/.noConfigDebugAdapterEndpoints/endpoint-3d68f1ea0c87f7a4.txt', 'LANG': 'C.UTF-8', 'PYTHONSTARTUP': '/home/yyj/.vscode-server/data/User/workspaceStorage/cadb4e8c734c8c4438e30ba9fccc0cdb/ms-python.python/pythonrc.py', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-31c233c082.sock', 'TERM_PROGRAM': 'vscode', 'AMENT_PREFIX_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy', 'WSLENV': 'ELECTRON_RUN_AS_NODE/w:'}), 'shell': False}
+[0.100764] (-) TimerEvent: {}
+[0.159322] (iekf_lio) StdoutLine: {'line': b'-- The C compiler identification is GNU 13.3.0\n'}
+[0.200966] (-) TimerEvent: {}
+[0.302627] (-) TimerEvent: {}
+[0.403065] (-) TimerEvent: {}
+[0.503444] (-) TimerEvent: {}
+[0.603919] (-) TimerEvent: {}
+[0.628939] (iekf_lio) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 13.3.0\n'}
+[0.704196] (-) TimerEvent: {}
+[0.804789] (-) TimerEvent: {}
+[0.905186] (-) TimerEvent: {}
+[0.988798] (iekf_lio) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[1.005330] (-) TimerEvent: {}
+[1.105667] (-) TimerEvent: {}
+[1.189876] (iekf_lio) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[1.196012] (iekf_lio) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[1.196494] (iekf_lio) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[1.197040] (iekf_lio) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[1.205785] (-) TimerEvent: {}
+[1.258755] (iekf_lio) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[1.305911] (-) TimerEvent: {}
+[1.406183] (-) TimerEvent: {}
+[1.455223] (iekf_lio) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.461953] (iekf_lio) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[1.462400] (iekf_lio) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.462572] (iekf_lio) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[1.479360] (iekf_lio) StdoutLine: {'line': b'-- Found ament_cmake: 2.5.5 (/opt/ros/jazzy/share/ament_cmake/cmake)\n'}
+[1.506339] (-) TimerEvent: {}
+[1.599772] (iekf_lio) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[1.606635] (-) TimerEvent: {}
+[1.704132] (iekf_lio) StdoutLine: {'line': b'-- Found rclcpp: 28.1.16 (/opt/ros/jazzy/share/rclcpp/cmake)\n'}
+[1.706801] (-) TimerEvent: {}
+[1.807350] (-) TimerEvent: {}
+[1.857354] (iekf_lio) StdoutLine: {'line': b'-- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)\n'}
+[1.871061] (iekf_lio) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)\n'}
+[1.896263] (iekf_lio) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.907591] (-) TimerEvent: {}
+[1.927333] (iekf_lio) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[2.007826] (-) TimerEvent: {}
+[2.016331] (iekf_lio) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)\n'}
+[2.019944] (iekf_lio) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)\n'}
+[2.096112] (iekf_lio) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  \n'}
+[2.108019] (-) TimerEvent: {}
+[2.199676] (iekf_lio) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") \n'}
+[2.208298] (-) TimerEvent: {}
+[2.264803] (iekf_lio) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[2.308596] (-) TimerEvent: {}
+[2.408968] (-) TimerEvent: {}
+[2.454070] (iekf_lio) StdoutLine: {'line': b'-- Found sensor_msgs: 5.3.6 (/opt/ros/jazzy/share/sensor_msgs/cmake)\n'}
+[2.509250] (-) TimerEvent: {}
+[2.545300] (iekf_lio) StdoutLine: {'line': b'-- Found nav_msgs: 5.3.6 (/opt/ros/jazzy/share/nav_msgs/cmake)\n'}
+[2.593945] (iekf_lio) StdoutLine: {'line': b'-- Found tf2: 0.36.19 (/opt/ros/jazzy/share/tf2/cmake)\n'}
+[2.603356] (iekf_lio) StdoutLine: {'line': b'-- Found tf2_ros: 0.36.19 (/opt/ros/jazzy/share/tf2_ros/cmake)\n'}
+[2.609562] (-) TimerEvent: {}
+[2.710110] (-) TimerEvent: {}
+[2.786764] (iekf_lio) StdoutLine: {'line': b'-- Found pcl_conversions: 2.6.2 (/opt/ros/jazzy/share/pcl_conversions/cmake)\n'}
+[2.810864] (-) TimerEvent: {}
+[2.863297] (iekf_lio) StderrLine: {'line': b'\x1b[33mCMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/Modules/FindFLANN.cmake:45 (find_package):\n'}
+[2.863521] (iekf_lio) StderrLine: {'line': b'  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT\n'}
+[2.863606] (iekf_lio) StderrLine: {'line': b'  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the\n'}
+[2.863684] (iekf_lio) StderrLine: {'line': b'  cmake_policy command to set the policy and suppress this warning.\n'}
+[2.863759] (iekf_lio) StderrLine: {'line': b'\n'}
+[2.863882] (iekf_lio) StderrLine: {'line': b'  CMake variable FLANN_ROOT is set to:\n'}
+[2.864001] (iekf_lio) StderrLine: {'line': b'\n'}
+[2.864069] (iekf_lio) StderrLine: {'line': b'    /usr\n'}
+[2.864128] (iekf_lio) StderrLine: {'line': b'\n'}
+[2.864184] (iekf_lio) StderrLine: {'line': b'  For compatibility, find_package is ignoring the variable, but code in a\n'}
+[2.864244] (iekf_lio) StderrLine: {'line': b'  .cmake module might still use it.\n'}
+[2.864302] (iekf_lio) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[2.864361] (iekf_lio) StderrLine: {'line': b'  /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:261 (find_package)\n'}
+[2.864419] (iekf_lio) StderrLine: {'line': b'  /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:306 (find_flann)\n'}
+[2.864475] (iekf_lio) StderrLine: {'line': b'  /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:570 (find_external_library)\n'}
+[2.864532] (iekf_lio) StderrLine: {'line': b'  /opt/ros/jazzy/share/pcl_conversions/cmake/ament_cmake_export_dependencies-extras.cmake:21 (find_package)\n'}
+[2.864588] (iekf_lio) StderrLine: {'line': b'  /opt/ros/jazzy/share/pcl_conversions/cmake/pcl_conversionsConfig.cmake:41 (include)\n'}
+[2.864645] (iekf_lio) StderrLine: {'line': b'  CMakeLists.txt:16 (find_package)\n'}
+[2.864773] (iekf_lio) StderrLine: {'line': b'This warning is for project developers.  Use -Wno-dev to suppress it.\n'}
+[2.864835] (iekf_lio) StderrLine: {'line': b'\x1b[0m\n'}
+[2.866693] (iekf_lio) StdoutLine: {'line': b'-- Found flann version 1.9.2\n'}
+[2.911039] (-) TimerEvent: {}
+[3.011453] (-) TimerEvent: {}
+[3.111787] (-) TimerEvent: {}
+[3.212180] (-) TimerEvent: {}
+[3.304993] (iekf_lio) StdoutLine: {'line': b'-- Found OpenMP_CXX: -fopenmp (found version "4.5") \n'}
+[3.305205] (iekf_lio) StdoutLine: {'line': b'-- Found OpenMP: TRUE (found version "4.5") found components: CXX \n'}
+[3.312470] (-) TimerEvent: {}
+[3.413124] (-) TimerEvent: {}
+[3.513363] (-) TimerEvent: {}
+[3.613828] (-) TimerEvent: {}
+[3.714114] (-) TimerEvent: {}
+[3.814484] (-) TimerEvent: {}
+[3.914849] (-) TimerEvent: {}
+[4.017001] (-) TimerEvent: {}
+[4.119106] (-) TimerEvent: {}
+[4.219723] (-) TimerEvent: {}
+[4.320389] (-) TimerEvent: {}
+[4.422986] (-) TimerEvent: {}
+[4.523773] (-) TimerEvent: {}
+[4.625961] (-) TimerEvent: {}
+[4.728591] (-) TimerEvent: {}
+[4.829666] (-) TimerEvent: {}
+[4.931487] (-) TimerEvent: {}
+[5.031964] (-) TimerEvent: {}
+[5.132614] (-) TimerEvent: {}
+[5.235295] (-) TimerEvent: {}
+[5.336483] (-) TimerEvent: {}
+[5.438007] (-) TimerEvent: {}
+[5.538968] (-) TimerEvent: {}
+[5.640451] (-) TimerEvent: {}
+[5.740920] (-) TimerEvent: {}
+[5.842236] (-) TimerEvent: {}
+[5.944257] (-) TimerEvent: {}
+[6.046956] (-) TimerEvent: {}
+[6.147984] (-) TimerEvent: {}
+[6.248424] (-) TimerEvent: {}
+[6.349938] (-) TimerEvent: {}
+[6.452685] (-) TimerEvent: {}
+[6.555426] (-) TimerEvent: {}
+[6.656544] (-) TimerEvent: {}
+[6.759272] (-) TimerEvent: {}
+[6.861061] (-) TimerEvent: {}
+[6.961703] (-) TimerEvent: {}
+[7.064428] (-) TimerEvent: {}
+[7.164952] (-) TimerEvent: {}
+[7.265445] (-) TimerEvent: {}
+[7.365802] (-) TimerEvent: {}
+[7.466261] (-) TimerEvent: {}
+[7.566653] (-) TimerEvent: {}
+[7.667117] (-) TimerEvent: {}
+[7.767606] (-) TimerEvent: {}
+[7.868068] (-) TimerEvent: {}
+[7.968413] (-) TimerEvent: {}
+[8.069309] (-) TimerEvent: {}
+[8.169676] (-) TimerEvent: {}
+[8.271354] (-) TimerEvent: {}
+[8.372879] (-) TimerEvent: {}
+[8.473251] (-) TimerEvent: {}
+[8.573527] (-) TimerEvent: {}
+[8.675075] (-) TimerEvent: {}
+[8.777873] (-) TimerEvent: {}
+[8.878393] (-) TimerEvent: {}
+[8.978640] (-) TimerEvent: {}
+[9.078916] (-) TimerEvent: {}
+[9.179299] (-) TimerEvent: {}
+[9.279795] (-) TimerEvent: {}
+[9.381484] (-) TimerEvent: {}
+[9.482979] (-) TimerEvent: {}
+[9.583893] (-) TimerEvent: {}
+[9.685145] (-) TimerEvent: {}
+[9.785605] (-) TimerEvent: {}
+[9.886095] (-) TimerEvent: {}
+[9.986490] (-) TimerEvent: {}
+[10.087387] (-) TimerEvent: {}
+[10.187831] (-) TimerEvent: {}
+[10.288356] (-) TimerEvent: {}
+[10.388945] (-) TimerEvent: {}
+[10.489428] (-) TimerEvent: {}
+[10.589840] (-) TimerEvent: {}
+[10.690346] (-) TimerEvent: {}
+[10.790801] (-) TimerEvent: {}
+[10.891420] (-) TimerEvent: {}
+[10.994230] (-) TimerEvent: {}
+[11.094671] (-) TimerEvent: {}
+[11.197564] (-) TimerEvent: {}
+[11.298350] (-) TimerEvent: {}
+[11.400983] (-) TimerEvent: {}
+[11.501616] (-) TimerEvent: {}
+[11.602853] (-) TimerEvent: {}
+[11.705644] (-) TimerEvent: {}
+[11.806105] (-) TimerEvent: {}
+[11.907851] (-) TimerEvent: {}
+[12.010643] (-) TimerEvent: {}
+[12.112247] (-) TimerEvent: {}
+[12.214972] (-) TimerEvent: {}
+[12.315398] (-) TimerEvent: {}
+[12.415752] (-) TimerEvent: {}
+[12.516220] (-) TimerEvent: {}
+[12.617326] (-) TimerEvent: {}
+[12.718514] (-) TimerEvent: {}
+[12.819837] (-) TimerEvent: {}
+[12.830981] (iekf_lio) StdoutLine: {'line': b"-- Checking for module 'libusb-1.0'\n"}
+[12.841818] (iekf_lio) StdoutLine: {'line': b'--   Found libusb-1.0, version 1.0.27\n'}
+[12.920054] (-) TimerEvent: {}
+[12.927119] (iekf_lio) StdoutLine: {'line': b'-- Found libusb: /usr/lib/x86_64-linux-gnu/libusb-1.0.so  \n'}
+[12.928614] (iekf_lio) StdoutLine: {'line': b'-- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)\n'}
+[13.020424] (-) TimerEvent: {}
+[13.111079] (iekf_lio) StdoutLine: {'line': b'-- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)\n'}
+[13.120694] (-) TimerEvent: {}
+[13.204040] (iekf_lio) StdoutLine: {'line': b'-- Could NOT find Pcap (missing: PCAP_LIBRARIES PCAP_INCLUDE_DIRS) \n'}
+[13.220924] (-) TimerEvent: {}
+[13.321218] (-) TimerEvent: {}
+[13.421557] (-) TimerEvent: {}
+[13.522691] (-) TimerEvent: {}
+[13.624021] (-) TimerEvent: {}
+[13.724497] (-) TimerEvent: {}
+[13.742553] (iekf_lio) StdoutLine: {'line': b'-- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.3")  \n'}
+[13.824782] (-) TimerEvent: {}
+[13.925265] (-) TimerEvent: {}
+[14.025540] (-) TimerEvent: {}
+[14.125850] (-) TimerEvent: {}
+[14.185987] (iekf_lio) StdoutLine: {'line': b'-- Found PNG: /usr/lib/x86_64-linux-gnu/libpng.so (found version "1.6.43") \n'}
+[14.225980] (-) TimerEvent: {}
+[14.326280] (-) TimerEvent: {}
+[14.426818] (-) TimerEvent: {}
+[14.527648] (-) TimerEvent: {}
+[14.628819] (-) TimerEvent: {}
+[14.730086] (-) TimerEvent: {}
+[14.831333] (-) TimerEvent: {}
+[14.931787] (-) TimerEvent: {}
+[15.032340] (-) TimerEvent: {}
+[15.133151] (-) TimerEvent: {}
+[15.234308] (-) TimerEvent: {}
+[15.335439] (-) TimerEvent: {}
+[15.435901] (-) TimerEvent: {}
+[15.536456] (-) TimerEvent: {}
+[15.639378] (-) TimerEvent: {}
+[15.740648] (-) TimerEvent: {}
+[15.843559] (-) TimerEvent: {}
+[15.944028] (-) TimerEvent: {}
+[16.046901] (-) TimerEvent: {}
+[16.148163] (-) TimerEvent: {}
+[16.251108] (-) TimerEvent: {}
+[16.353693] (-) TimerEvent: {}
+[16.456839] (-) TimerEvent: {}
+[16.560045] (-) TimerEvent: {}
+[16.663117] (-) TimerEvent: {}
+[16.763521] (-) TimerEvent: {}
+[16.864183] (-) TimerEvent: {}
+[16.966976] (-) TimerEvent: {}
+[17.070006] (-) TimerEvent: {}
+[17.173030] (-) TimerEvent: {}
+[17.277737] (-) TimerEvent: {}
+[17.382769] (-) TimerEvent: {}
+[17.485065] (-) TimerEvent: {}
+[17.590057] (-) TimerEvent: {}
+[17.695092] (-) TimerEvent: {}
+[17.798319] (-) TimerEvent: {}
+[17.899354] (-) TimerEvent: {}
+[18.001611] (-) TimerEvent: {}
+[18.102665] (-) TimerEvent: {}
+[18.207622] (-) TimerEvent: {}
+[18.309407] (-) TimerEvent: {}
+[18.411147] (-) TimerEvent: {}
+[18.513221] (-) TimerEvent: {}
+[18.614439] (-) TimerEvent: {}
+[18.716199] (-) TimerEvent: {}
+[18.818268] (-) TimerEvent: {}
+[18.920301] (-) TimerEvent: {}
+[19.020897] (-) TimerEvent: {}
+[19.121481] (-) TimerEvent: {}
+[19.222037] (-) TimerEvent: {}
+[19.322883] (-) TimerEvent: {}
+[19.423538] (-) TimerEvent: {}
+[19.524541] (-) TimerEvent: {}
+[19.625691] (-) TimerEvent: {}
+[19.727498] (-) TimerEvent: {}
+[19.829095] (-) TimerEvent: {}
+[19.930673] (-) TimerEvent: {}
+[20.032506] (-) TimerEvent: {}
+[20.134485] (-) TimerEvent: {}
+[20.234922] (-) TimerEvent: {}
+[20.335663] (-) TimerEvent: {}
+[20.436321] (-) TimerEvent: {}
+[20.537165] (-) TimerEvent: {}
+[20.638181] (-) TimerEvent: {}
+[20.739409] (-) TimerEvent: {}
+[20.841074] (-) TimerEvent: {}
+[20.941735] (-) TimerEvent: {}
+[21.042271] (-) TimerEvent: {}
+[21.143507] (-) TimerEvent: {}
+[21.245033] (-) TimerEvent: {}
+[21.346861] (-) TimerEvent: {}
+[21.448608] (-) TimerEvent: {}
+[21.550066] (-) TimerEvent: {}
+[21.651480] (-) TimerEvent: {}
+[21.753327] (-) TimerEvent: {}
+[21.855244] (-) TimerEvent: {}
+[21.957413] (-) TimerEvent: {}
+[22.057988] (-) TimerEvent: {}
+[22.163008] (-) TimerEvent: {}
+[22.263431] (-) TimerEvent: {}
+[22.364182] (-) TimerEvent: {}
+[22.464733] (-) TimerEvent: {}
+[22.565516] (-) TimerEvent: {}
+[22.594806] (iekf_lio) StdoutLine: {'line': b'-- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)\n'}
+[22.599141] (iekf_lio) StdoutLine: {'line': b'-- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)\n'}
+[22.665869] (-) TimerEvent: {}
+[22.766269] (-) TimerEvent: {}
+[22.869608] (-) TimerEvent: {}
+[22.969986] (-) TimerEvent: {}
+[23.071295] (-) TimerEvent: {}
+[23.176567] (-) TimerEvent: {}
+[23.277231] (-) TimerEvent: {}
+[23.377616] (-) TimerEvent: {}
+[23.478060] (-) TimerEvent: {}
+[23.578368] (-) TimerEvent: {}
+[23.678818] (-) TimerEvent: {}
+[23.779248] (-) TimerEvent: {}
+[23.879657] (-) TimerEvent: {}
+[23.979980] (-) TimerEvent: {}
+[24.080317] (-) TimerEvent: {}
+[24.180587] (-) TimerEvent: {}
+[24.280935] (-) TimerEvent: {}
+[24.381391] (-) TimerEvent: {}
+[24.481696] (-) TimerEvent: {}
+[24.582150] (-) TimerEvent: {}
+[24.682544] (-) TimerEvent: {}
+[24.783005] (-) TimerEvent: {}
+[24.883422] (-) TimerEvent: {}
+[24.983896] (-) TimerEvent: {}
+[25.084299] (-) TimerEvent: {}
+[25.184612] (-) TimerEvent: {}
+[25.285174] (-) TimerEvent: {}
+[25.385587] (-) TimerEvent: {}
+[25.485977] (-) TimerEvent: {}
+[25.586630] (-) TimerEvent: {}
+[25.687185] (-) TimerEvent: {}
+[25.787660] (-) TimerEvent: {}
+[25.888368] (-) TimerEvent: {}
+[25.989675] (-) TimerEvent: {}
+[26.092510] (-) TimerEvent: {}
+[26.195409] (-) TimerEvent: {}
+[26.295948] (-) TimerEvent: {}
+[26.396686] (-) TimerEvent: {}
+[26.499615] (-) TimerEvent: {}
+[26.602611] (-) TimerEvent: {}
+[26.705540] (-) TimerEvent: {}
+[26.808493] (-) TimerEvent: {}
+[26.909520] (-) TimerEvent: {}
+[27.012480] (-) TimerEvent: {}
+[27.115601] (-) TimerEvent: {}
+[27.218722] (-) TimerEvent: {}
+[27.319493] (-) TimerEvent: {}
+[27.419992] (-) TimerEvent: {}
+[27.520374] (-) TimerEvent: {}
+[27.621008] (-) TimerEvent: {}
+[27.721611] (-) TimerEvent: {}
+[27.822118] (-) TimerEvent: {}
+[27.923078] (-) TimerEvent: {}
+[28.025907] (-) TimerEvent: {}
+[28.127739] (-) TimerEvent: {}
+[28.230610] (-) TimerEvent: {}
+[28.333544] (-) TimerEvent: {}
+[28.435252] (-) TimerEvent: {}
+[28.538222] (-) TimerEvent: {}
+[28.641308] (-) TimerEvent: {}
+[28.744466] (-) TimerEvent: {}
+[28.847217] (-) TimerEvent: {}
+[28.947767] (-) TimerEvent: {}
+[29.048343] (-) TimerEvent: {}
+[29.148761] (-) TimerEvent: {}
+[29.249553] (-) TimerEvent: {}
+[29.350131] (-) TimerEvent: {}
+[29.450561] (-) TimerEvent: {}
+[29.551031] (-) TimerEvent: {}
+[29.653173] (-) TimerEvent: {}
+[29.756501] (-) TimerEvent: {}
+[29.859746] (-) TimerEvent: {}
+[29.962101] (-) TimerEvent: {}
+[30.062811] (-) TimerEvent: {}
+[30.163504] (-) TimerEvent: {}
+[30.264141] (-) TimerEvent: {}
+[30.364675] (-) TimerEvent: {}
+[30.465259] (-) TimerEvent: {}
+[30.568439] (-) TimerEvent: {}
+[30.671618] (-) TimerEvent: {}
+[30.773255] (-) TimerEvent: {}
+[30.873670] (-) TimerEvent: {}
+[30.924554] (iekf_lio) StdoutLine: {'line': b'-- Found Qhull version 8.0.2\n'}
+[30.973806] (-) TimerEvent: {}
+[31.074216] (-) TimerEvent: {}
+[31.174599] (-) TimerEvent: {}
+[31.275141] (-) TimerEvent: {}
+[31.375957] (-) TimerEvent: {}
+[31.479054] (-) TimerEvent: {}
+[31.579603] (-) TimerEvent: {}
+[31.680089] (-) TimerEvent: {}
+[31.780512] (-) TimerEvent: {}
+[31.881205] (-) TimerEvent: {}
+[31.981820] (-) TimerEvent: {}
+[32.082339] (-) TimerEvent: {}
+[32.182969] (-) TimerEvent: {}
+[32.285897] (-) TimerEvent: {}
+[32.386487] (-) TimerEvent: {}
+[32.486926] (-) TimerEvent: {}
+[32.587440] (-) TimerEvent: {}
+[32.688006] (-) TimerEvent: {}
+[32.788428] (-) TimerEvent: {}
+[32.888821] (-) TimerEvent: {}
+[32.989198] (-) TimerEvent: {}
+[33.089564] (-) TimerEvent: {}
+[33.189924] (-) TimerEvent: {}
+[33.290380] (-) TimerEvent: {}
+[33.390897] (-) TimerEvent: {}
+[33.491290] (-) TimerEvent: {}
+[33.591596] (-) TimerEvent: {}
+[33.692001] (-) TimerEvent: {}
+[33.794328] (-) TimerEvent: {}
+[33.894766] (-) TimerEvent: {}
+[33.997281] (-) TimerEvent: {}
+[34.097730] (-) TimerEvent: {}
+[34.198343] (-) TimerEvent: {}
+[34.298890] (-) TimerEvent: {}
+[34.399632] (-) TimerEvent: {}
+[34.502321] (-) TimerEvent: {}
+[34.603017] (-) TimerEvent: {}
+[34.705786] (-) TimerEvent: {}
+[34.806387] (-) TimerEvent: {}
+[34.906976] (-) TimerEvent: {}
+[35.007444] (-) TimerEvent: {}
+[35.108606] (-) TimerEvent: {}
+[35.209149] (-) TimerEvent: {}
+[35.311264] (-) TimerEvent: {}
+[35.414147] (-) TimerEvent: {}
+[35.516753] (-) TimerEvent: {}
+[35.619473] (-) TimerEvent: {}
+[35.721486] (-) TimerEvent: {}
+[35.823909] (-) TimerEvent: {}
+[35.924689] (-) TimerEvent: {}
+[36.027461] (-) TimerEvent: {}
+[36.128958] (-) TimerEvent: {}
+[36.229889] (-) TimerEvent: {}
+[36.332887] (-) TimerEvent: {}
+[36.435805] (-) TimerEvent: {}
+[36.538510] (-) TimerEvent: {}
+[36.640994] (-) TimerEvent: {}
+[36.743725] (-) TimerEvent: {}
+[36.844352] (-) TimerEvent: {}
+[36.945951] (-) TimerEvent: {}
+[37.048751] (-) TimerEvent: {}
+[37.150953] (-) TimerEvent: {}
+[37.253796] (-) TimerEvent: {}
+[37.355282] (-) TimerEvent: {}
+[37.455788] (-) TimerEvent: {}
+[37.556781] (-) TimerEvent: {}
+[37.658938] (-) TimerEvent: {}
+[37.759450] (-) TimerEvent: {}
+[37.859904] (-) TimerEvent: {}
+[37.961373] (-) TimerEvent: {}
+[38.063682] (-) TimerEvent: {}
+[38.165968] (-) TimerEvent: {}
+[38.268102] (-) TimerEvent: {}
+[38.370444] (-) TimerEvent: {}
+[38.472865] (-) TimerEvent: {}
+[38.574077] (-) TimerEvent: {}
+[38.674528] (-) TimerEvent: {}
+[38.774993] (-) TimerEvent: {}
+[38.875451] (-) TimerEvent: {}
+[38.976928] (-) TimerEvent: {}
+[39.079428] (-) TimerEvent: {}
+[39.179952] (-) TimerEvent: {}
+[39.190104] (iekf_lio) StdoutLine: {'line': b'-- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)\n'}
+[39.280381] (-) TimerEvent: {}
+[39.381854] (-) TimerEvent: {}
+[39.482403] (-) TimerEvent: {}
+[39.582872] (-) TimerEvent: {}
+[39.683313] (-) TimerEvent: {}
+[39.783725] (-) TimerEvent: {}
+[39.884451] (-) TimerEvent: {}
+[39.986223] (-) TimerEvent: {}
+[40.088688] (-) TimerEvent: {}
+[40.191052] (-) TimerEvent: {}
+[40.292236] (-) TimerEvent: {}
+[40.394658] (-) TimerEvent: {}
+[40.496559] (-) TimerEvent: {}
+[40.596988] (-) TimerEvent: {}
+[40.697492] (-) TimerEvent: {}
+[40.798052] (-) TimerEvent: {}
+[40.898647] (-) TimerEvent: {}
+[40.999074] (-) TimerEvent: {}
+[41.099643] (-) TimerEvent: {}
+[41.200187] (-) TimerEvent: {}
+[41.300654] (-) TimerEvent: {}
+[41.401090] (-) TimerEvent: {}
+[41.501488] (-) TimerEvent: {}
+[41.602233] (-) TimerEvent: {}
+[41.702989] (-) TimerEvent: {}
+[41.803925] (-) TimerEvent: {}
+[41.905278] (-) TimerEvent: {}
+[42.006640] (-) TimerEvent: {}
+[42.107372] (-) TimerEvent: {}
+[42.207792] (-) TimerEvent: {}
+[42.308099] (-) TimerEvent: {}
+[42.408629] (-) TimerEvent: {}
+[42.509246] (-) TimerEvent: {}
+[42.609952] (-) TimerEvent: {}
+[42.710405] (-) TimerEvent: {}
+[42.811118] (-) TimerEvent: {}
+[42.912562] (-) TimerEvent: {}
+[43.013845] (-) TimerEvent: {}
+[43.114506] (-) TimerEvent: {}
+[43.215247] (-) TimerEvent: {}
+[43.317691] (-) TimerEvent: {}
+[43.420102] (-) TimerEvent: {}
+[43.522089] (-) TimerEvent: {}
+[43.623443] (-) TimerEvent: {}
+[43.726752] (-) TimerEvent: {}
+[43.827928] (-) TimerEvent: {}
+[43.928583] (-) TimerEvent: {}
+[44.029221] (-) TimerEvent: {}
+[44.129695] (-) TimerEvent: {}
+[44.230277] (-) TimerEvent: {}
+[44.330848] (-) TimerEvent: {}
+[44.431251] (-) TimerEvent: {}
+[44.531899] (-) TimerEvent: {}
+[44.632539] (-) TimerEvent: {}
+[44.733841] (-) TimerEvent: {}
+[44.835095] (-) TimerEvent: {}
+[44.936475] (-) TimerEvent: {}
+[45.037429] (-) TimerEvent: {}
+[45.138653] (-) TimerEvent: {}
+[45.239682] (-) TimerEvent: {}
+[45.340086] (-) TimerEvent: {}
+[45.441412] (-) TimerEvent: {}
+[45.542062] (-) TimerEvent: {}
+[45.642551] (-) TimerEvent: {}
+[45.743220] (-) TimerEvent: {}
+[45.843843] (-) TimerEvent: {}
+[45.944455] (-) TimerEvent: {}
+[46.044794] (-) TimerEvent: {}
+[46.145283] (-) TimerEvent: {}
+[46.245688] (-) TimerEvent: {}
+[46.345986] (-) TimerEvent: {}
+[46.447463] (-) TimerEvent: {}
+[46.548005] (-) TimerEvent: {}
+[46.651234] (-) TimerEvent: {}
+[46.751622] (-) TimerEvent: {}
+[46.853769] (-) TimerEvent: {}
+[46.954370] (-) TimerEvent: {}
+[47.054979] (-) TimerEvent: {}
+[47.155512] (-) TimerEvent: {}
+[47.256007] (-) TimerEvent: {}
+[47.356599] (-) TimerEvent: {}
+[47.457221] (-) TimerEvent: {}
+[47.462052] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_COMMON: /usr/lib/x86_64-linux-gnu/libpcl_common.so  \n'}
+[47.463065] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_KDTREE: /usr/lib/x86_64-linux-gnu/libpcl_kdtree.so  \n'}
+[47.463664] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_OCTREE: /usr/lib/x86_64-linux-gnu/libpcl_octree.so  \n'}
+[47.464415] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_SEARCH: /usr/lib/x86_64-linux-gnu/libpcl_search.so  \n'}
+[47.464899] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_SAMPLE_CONSENSUS: /usr/lib/x86_64-linux-gnu/libpcl_sample_consensus.so  \n'}
+[47.465786] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_FILTERS: /usr/lib/x86_64-linux-gnu/libpcl_filters.so  \n'}
+[47.466142] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_2D: /usr/include/pcl-1.14  \n'}
+[47.466596] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_GEOMETRY: /usr/include/pcl-1.14  \n'}
+[47.467099] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_IO: /usr/lib/x86_64-linux-gnu/libpcl_io.so  \n'}
+[47.467941] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_FEATURES: /usr/lib/x86_64-linux-gnu/libpcl_features.so  \n'}
+[47.468541] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_ML: /usr/lib/x86_64-linux-gnu/libpcl_ml.so  \n'}
+[47.469283] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_SEGMENTATION: /usr/lib/x86_64-linux-gnu/libpcl_segmentation.so  \n'}
+[47.469937] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_VISUALIZATION: /usr/lib/x86_64-linux-gnu/libpcl_visualization.so  \n'}
+[47.470745] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_SURFACE: /usr/lib/x86_64-linux-gnu/libpcl_surface.so  \n'}
+[47.471311] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_REGISTRATION: /usr/lib/x86_64-linux-gnu/libpcl_registration.so  \n'}
+[47.472121] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_KEYPOINTS: /usr/lib/x86_64-linux-gnu/libpcl_keypoints.so  \n'}
+[47.472829] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_TRACKING: /usr/lib/x86_64-linux-gnu/libpcl_tracking.so  \n'}
+[47.473534] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_RECOGNITION: /usr/lib/x86_64-linux-gnu/libpcl_recognition.so  \n'}
+[47.474386] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_STEREO: /usr/lib/x86_64-linux-gnu/libpcl_stereo.so  \n'}
+[47.474925] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_APPS: /usr/lib/x86_64-linux-gnu/libpcl_apps.so  \n'}
+[47.475576] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_IN_HAND_SCANNER: /usr/include/pcl-1.14  \n'}
+[47.475821] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_MODELER: /usr/include/pcl-1.14  \n'}
+[47.476209] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_POINT_CLOUD_EDITOR: /usr/include/pcl-1.14  \n'}
+[47.476895] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_OUTOFCORE: /usr/lib/x86_64-linux-gnu/libpcl_outofcore.so  \n'}
+[47.477555] (iekf_lio) StdoutLine: {'line': b'-- Found PCL_PEOPLE: /usr/lib/x86_64-linux-gnu/libpcl_people.so  \n'}
+[47.479621] (iekf_lio) StderrLine: {'line': b'\x1b[33mCMake Warning (dev) at CMakeLists.txt:17 (find_package):\n'}
+[47.479715] (iekf_lio) StderrLine: {'line': b'  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.\n'}
+[47.479754] (iekf_lio) StderrLine: {'line': b'  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy\n'}
+[47.479791] (iekf_lio) StderrLine: {'line': b'  command to set the policy and suppress this warning.\n'}
+[47.479826] (iekf_lio) StderrLine: {'line': b'\n'}
+[47.479860] (iekf_lio) StderrLine: {'line': b'  CMake variable PCL_ROOT is set to:\n'}
+[47.479893] (iekf_lio) StderrLine: {'line': b'\n'}
+[47.479925] (iekf_lio) StderrLine: {'line': b'    /usr\n'}
+[47.479958] (iekf_lio) StderrLine: {'line': b'\n'}
+[47.479991] (iekf_lio) StderrLine: {'line': b'  For compatibility, CMake is ignoring the variable.\n'}
+[47.480023] (iekf_lio) StderrLine: {'line': b'This warning is for project developers.  Use -Wno-dev to suppress it.\n'}
+[47.480055] (iekf_lio) StderrLine: {'line': b'\x1b[0m\n'}
+[47.497827] (iekf_lio) StdoutLine: {'line': b'-- Found visualization_msgs: 5.3.6 (/opt/ros/jazzy/share/visualization_msgs/cmake)\n'}
+[47.527666] (iekf_lio) StdoutLine: {'line': b'-- Found livox_ros_driver2: 1.0.0 (/home/yyj/livox_ws/install/livox_ros_driver2/share/livox_ros_driver2/cmake)\n'}
+[47.558155] (-) TimerEvent: {}
+[47.658529] (-) TimerEvent: {}
+[47.759199] (-) TimerEvent: {}
+[47.859610] (-) TimerEvent: {}
+[47.960121] (-) TimerEvent: {}
+[48.061050] (-) TimerEvent: {}
+[48.162451] (-) TimerEvent: {}
+[48.263191] (-) TimerEvent: {}
+[48.364643] (-) TimerEvent: {}
+[48.466019] (-) TimerEvent: {}
+[48.566977] (-) TimerEvent: {}
+[48.667484] (-) TimerEvent: {}
+[48.701692] (iekf_lio) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.17.4 (/opt/ros/jazzy/share/ament_lint_auto/cmake)\n'}
+[48.767995] (-) TimerEvent: {}
+[48.798707] (iekf_lio) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[48.799034] (iekf_lio) StdoutLine: {'line': b'-- Configured cppcheck include dirs: /home/yyj/IEKF_LIO_node/src/iekf_lio/include\n'}
+[48.799124] (iekf_lio) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[48.801019] (iekf_lio) StdoutLine: {'line': b"-- Added test 'flake8' to check Python code syntax and style conventions\n"}
+[48.801093] (iekf_lio) StdoutLine: {'line': b"-- Configured 'flake8' exclude dirs and/or files: \n"}
+[48.804134] (iekf_lio) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[48.806192] (iekf_lio) StdoutLine: {'line': b"-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257\n"}
+[48.815514] (iekf_lio) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[48.815677] (iekf_lio) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[48.817485] (iekf_lio) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[48.819549] (iekf_lio) StdoutLine: {'line': b'-- Configuring done (48.8s)\n'}
+[48.864587] (iekf_lio) StdoutLine: {'line': b'-- Generating done (0.0s)\n'}
+[48.868218] (-) TimerEvent: {}
+[48.872444] (iekf_lio) StdoutLine: {'line': b'-- Build files have been written to: /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio\n'}
+[48.890645] (iekf_lio) CommandEnded: {'returncode': 0}
+[48.891429] (iekf_lio) JobProgress: {'identifier': 'iekf_lio', 'progress': 'build'}
+[48.891990] (iekf_lio) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', '--', '-j20', '-l20'], 'cwd': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'env': OrderedDict({'PYTHON_BASIC_REPL': '1', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'yyj', 'GIT_ASKPASS': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/yyj', 'TERM_PROGRAM_VERSION': '1.115.0', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-b2c3bf89-b8e8-4148-830a-21baa6a68d1e.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/node', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'WSL_DISTRO_NAME': 'Ubuntu', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/yyj/livox_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'yyj', 'NAME': 'Code', 'WSL_INTEROP': '/run/WSL/766_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/e/Git/cmd:/mnt/c/Users/11760/AppData/Local/Microsoft/WindowsApps:/mnt/e/Microsoft VS Code/bin:/mnt/e/WorkBuddy/bin:/snap/bin:/home/yyj/.fishros/bin/:/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/scripts/noConfigScripts:/home/yyj/.fishros/bin/', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/.noConfigDebugAdapterEndpoints/endpoint-3d68f1ea0c87f7a4.txt', 'LANG': 'C.UTF-8', 'PYTHONSTARTUP': '/home/yyj/.vscode-server/data/User/workspaceStorage/cadb4e8c734c8c4438e30ba9fccc0cdb/ms-python.python/pythonrc.py', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-31c233c082.sock', 'TERM_PROGRAM': 'vscode', 'AMENT_PREFIX_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy', 'WSLENV': 'ELECTRON_RUN_AS_NODE/w:'}), 'shell': False}
+[48.934549] (iekf_lio) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/imu/noise_model.cpp.o\x1b[0m\n'}
+[48.935011] (iekf_lio) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/test_build_node.dir/src/test_build_node.cpp.o\x1b[0m\n'}
+[48.935130] (iekf_lio) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/imu/imu_integrator.cpp.o\x1b[0m\n'}
+[48.935228] (iekf_lio) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/livox_sub_test.dir/src/livox_sub_test.cpp.o\x1b[0m\n'}
+[48.935313] (iekf_lio) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/mapping/voxel_map.cpp.o\x1b[0m\n'}
+[48.935389] (iekf_lio) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf_slam_node.cpp.o\x1b[0m\n'}
+[48.936787] (iekf_lio) StdoutLine: {'line': b'[ 58%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf/iekf_predictor.cpp.o\x1b[0m\n'}
+[48.936888] (iekf_lio) StdoutLine: {'line': b'[ 66%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/lidar/cloud_deskewer.cpp.o\x1b[0m\n'}
+[48.938641] (iekf_lio) StdoutLine: {'line': b'[ 75%] \x1b[32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf/iekf_updater.cpp.o\x1b[0m\n'}
+[48.968488] (-) TimerEvent: {}
+[49.068979] (-) TimerEvent: {}
+[49.169456] (-) TimerEvent: {}
+[49.270363] (-) TimerEvent: {}
+[49.370955] (-) TimerEvent: {}
+[49.472647] (-) TimerEvent: {}
+[49.575966] (-) TimerEvent: {}
+[49.679262] (-) TimerEvent: {}
+[49.780322] (-) TimerEvent: {}
+[49.881132] (-) TimerEvent: {}
+[49.981600] (-) TimerEvent: {}
+[50.081994] (-) TimerEvent: {}
+[50.182418] (-) TimerEvent: {}
+[50.283167] (-) TimerEvent: {}
+[50.383689] (-) TimerEvent: {}
+[50.484425] (-) TimerEvent: {}
+[50.585043] (-) TimerEvent: {}
+[50.685908] (-) TimerEvent: {}
+[50.786503] (-) TimerEvent: {}
+[50.887255] (-) TimerEvent: {}
+[50.987883] (-) TimerEvent: {}
+[51.088840] (-) TimerEvent: {}
+[51.189519] (-) TimerEvent: {}
+[51.289978] (-) TimerEvent: {}
+[51.390759] (-) TimerEvent: {}
+[51.491694] (-) TimerEvent: {}
+[51.594960] (-) TimerEvent: {}
+[51.697062] (-) TimerEvent: {}
+[51.797526] (-) TimerEvent: {}
+[51.897916] (-) TimerEvent: {}
+[51.998419] (-) TimerEvent: {}
+[52.099105] (-) TimerEvent: {}
+[52.199854] (-) TimerEvent: {}
+[52.300575] (-) TimerEvent: {}
+[52.401251] (-) TimerEvent: {}
+[52.502514] (-) TimerEvent: {}
+[52.603457] (-) TimerEvent: {}
+[52.703982] (-) TimerEvent: {}
+[52.793259] (iekf_lio) StdoutLine: {'line': b'[ 83%] \x1b[32m\x1b[1mLinking CXX executable test_build_node\x1b[0m\n'}
+[52.804550] (-) TimerEvent: {}
+[52.905927] (-) TimerEvent: {}
+[53.007649] (-) TimerEvent: {}
+[53.056072] (iekf_lio) StdoutLine: {'line': b'[ 83%] Built target test_build_node\n'}
+[53.109500] (-) TimerEvent: {}
+[53.210328] (-) TimerEvent: {}
+[53.312011] (-) TimerEvent: {}
+[53.413747] (-) TimerEvent: {}
+[53.515799] (-) TimerEvent: {}
+[53.617563] (-) TimerEvent: {}
+[53.718060] (-) TimerEvent: {}
+[53.818508] (-) TimerEvent: {}
+[53.918877] (-) TimerEvent: {}
+[54.020347] (-) TimerEvent: {}
+[54.125220] (-) TimerEvent: {}
+[54.229710] (-) TimerEvent: {}
+[54.334503] (-) TimerEvent: {}
+[54.439359] (-) TimerEvent: {}
+[54.544285] (-) TimerEvent: {}
+[54.649260] (-) TimerEvent: {}
+[54.750551] (-) TimerEvent: {}
+[54.852053] (-) TimerEvent: {}
+[54.954010] (-) TimerEvent: {}
+[55.056033] (-) TimerEvent: {}
+[55.157470] (-) TimerEvent: {}
+[55.257963] (-) TimerEvent: {}
+[55.360005] (-) TimerEvent: {}
+[55.461979] (-) TimerEvent: {}
+[55.563940] (-) TimerEvent: {}
+[55.664465] (-) TimerEvent: {}
+[55.764819] (-) TimerEvent: {}
+[55.865493] (-) TimerEvent: {}
+[55.965841] (-) TimerEvent: {}
+[56.066308] (-) TimerEvent: {}
+[56.166729] (-) TimerEvent: {}
+[56.191451] (iekf_lio) StdoutLine: {'line': b'[ 91%] \x1b[32m\x1b[1mLinking CXX executable livox_sub_test\x1b[0m\n'}
+[56.267073] (-) TimerEvent: {}
+[56.367402] (-) TimerEvent: {}
+[56.467738] (-) TimerEvent: {}
+[56.468821] (iekf_lio) StdoutLine: {'line': b'[ 91%] Built target livox_sub_test\n'}
+[56.568003] (-) TimerEvent: {}
+[56.668417] (-) TimerEvent: {}
+[56.768759] (-) TimerEvent: {}
+[56.869155] (-) TimerEvent: {}
+[56.969432] (-) TimerEvent: {}
+[57.069783] (-) TimerEvent: {}
+[57.170210] (-) TimerEvent: {}
+[57.270651] (-) TimerEvent: {}
+[57.371045] (-) TimerEvent: {}
+[57.471362] (-) TimerEvent: {}
+[57.571643] (-) TimerEvent: {}
+[57.672124] (-) TimerEvent: {}
+[57.772514] (-) TimerEvent: {}
+[57.873028] (-) TimerEvent: {}
+[57.973463] (-) TimerEvent: {}
+[58.073818] (-) TimerEvent: {}
+[58.174221] (-) TimerEvent: {}
+[58.274921] (-) TimerEvent: {}
+[58.375373] (-) TimerEvent: {}
+[58.475913] (-) TimerEvent: {}
+[58.576559] (-) TimerEvent: {}
+[58.676982] (-) TimerEvent: {}
+[58.777567] (-) TimerEvent: {}
+[58.881000] (-) TimerEvent: {}
+[58.984525] (-) TimerEvent: {}
+[59.087927] (-) TimerEvent: {}
+[59.191374] (-) TimerEvent: {}
+[59.293039] (-) TimerEvent: {}
+[59.395366] (-) TimerEvent: {}
+[59.498916] (-) TimerEvent: {}
+[59.602313] (-) TimerEvent: {}
+[59.705865] (-) TimerEvent: {}
+[59.809442] (-) TimerEvent: {}
+[59.912879] (-) TimerEvent: {}
+[60.013469] (-) TimerEvent: {}
+[60.116462] (-) TimerEvent: {}
+[60.220013] (-) TimerEvent: {}
+[60.322296] (-) TimerEvent: {}
+[60.425843] (-) TimerEvent: {}
+[60.526172] (-) TimerEvent: {}
+[60.628810] (-) TimerEvent: {}
+[60.730656] (-) TimerEvent: {}
+[60.832166] (-) TimerEvent: {}
+[60.932931] (-) TimerEvent: {}
+[61.033334] (-) TimerEvent: {}
+[61.078039] (iekf_lio) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable iekf_slam_node\x1b[0m\n'}
+[61.134038] (-) TimerEvent: {}
+[61.235134] (-) TimerEvent: {}
+[61.335912] (-) TimerEvent: {}
+[61.437305] (-) TimerEvent: {}
+[61.537793] (-) TimerEvent: {}
+[61.638255] (-) TimerEvent: {}
+[61.738852] (-) TimerEvent: {}
+[61.839480] (-) TimerEvent: {}
+[61.940116] (-) TimerEvent: {}
+[62.040992] (-) TimerEvent: {}
+[62.141397] (-) TimerEvent: {}
+[62.242108] (-) TimerEvent: {}
+[62.343285] (-) TimerEvent: {}
+[62.445203] (-) TimerEvent: {}
+[62.539345] (iekf_lio) StdoutLine: {'line': b'[100%] Built target iekf_slam_node\n'}
+[62.545400] (-) TimerEvent: {}
+[62.549595] (iekf_lio) CommandEnded: {'returncode': 0}
+[62.551950] (iekf_lio) JobProgress: {'identifier': 'iekf_lio', 'progress': 'install'}
+[62.560852] (iekf_lio) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio'], 'cwd': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'env': OrderedDict({'PYTHON_BASIC_REPL': '1', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'yyj', 'GIT_ASKPASS': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/yyj', 'TERM_PROGRAM_VERSION': '1.115.0', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-b2c3bf89-b8e8-4148-830a-21baa6a68d1e.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/node', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'WSL_DISTRO_NAME': 'Ubuntu', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/yyj/livox_ws/install', 'ROS_DISTRO': 'jazzy', 'LOGNAME': 'yyj', 'NAME': 'Code', 'WSL_INTEROP': '/run/WSL/766_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/yyj/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/yyj/.vscode-server/bin/41dd792b5e652393e7787322889ed5fdc58bd75b/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/e/Git/cmd:/mnt/c/Users/11760/AppData/Local/Microsoft/WindowsApps:/mnt/e/Microsoft VS Code/bin:/mnt/e/WorkBuddy/bin:/snap/bin:/home/yyj/.fishros/bin/:/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/scripts/noConfigScripts:/home/yyj/.fishros/bin/', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/yyj/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/.noConfigDebugAdapterEndpoints/endpoint-3d68f1ea0c87f7a4.txt', 'LANG': 'C.UTF-8', 'PYTHONSTARTUP': '/home/yyj/.vscode-server/data/User/workspaceStorage/cadb4e8c734c8c4438e30ba9fccc0cdb/ms-python.python/pythonrc.py', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-31c233c082.sock', 'TERM_PROGRAM': 'vscode', 'AMENT_PREFIX_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/yyj/livox_ws/install/livox_ros_driver2/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/yyj/livox_ws/install/livox_ros_driver2:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy', 'WSLENV': 'ELECTRON_RUN_AS_NODE/w:'}), 'shell': False}
+[62.569520] (iekf_lio) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[62.570597] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node\n'}
+[62.582365] (iekf_lio) StdoutLine: {'line': b'-- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node" to ""\n'}
+[62.582533] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node\n'}
+[62.582846] (iekf_lio) StdoutLine: {'line': b'-- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node" to ""\n'}
+[62.582898] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test\n'}
+[62.586231] (iekf_lio) StdoutLine: {'line': b'-- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test" to ""\n'}
+[62.586683] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/package_run_dependencies/iekf_lio\n'}
+[62.587337] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/parent_prefix_path/iekf_lio\n'}
+[62.589938] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.sh\n'}
+[62.590350] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.dsv\n'}
+[62.590681] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.sh\n'}
+[62.591123] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.dsv\n'}
+[62.591495] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.bash\n'}
+[62.591994] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.sh\n'}
+[62.592293] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.zsh\n'}
+[62.592691] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.dsv\n'}
+[62.593005] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.dsv\n'}
+[62.593589] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/packages/iekf_lio\n'}
+[62.593870] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig.cmake\n'}
+[62.594262] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig-version.cmake\n'}
+[62.594627] (iekf_lio) StdoutLine: {'line': b'-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.xml\n'}
+[62.596525] (iekf_lio) CommandEnded: {'returncode': 0}
+[62.617079] (iekf_lio) JobEnded: {'identifier': 'iekf_lio', 'rc': 0}
+[62.618147] (-) EventReactorShutdown: {}

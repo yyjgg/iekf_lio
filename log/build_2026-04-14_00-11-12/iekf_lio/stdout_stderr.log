@@ -1,0 +1,25 @@
+[ 16%] Built target test_build_node
+[ 33%] Built target livox_sub_test
+[ 41%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf_slam_node.cpp.o[0m
+[ 50%] [32m[1mLinking CXX executable iekf_slam_node[0m
+[100%] Built target iekf_slam_node
+-- Install configuration: ""
+-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node
+-- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node" to ""
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/package_run_dependencies/iekf_lio
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/parent_prefix_path/iekf_lio
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.sh
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.sh
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.dsv
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.bash
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.sh
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.zsh
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.dsv
+-- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.dsv
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/packages/iekf_lio
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig.cmake
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig-version.cmake
+-- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.xml

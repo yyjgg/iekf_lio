@@ -1,8 +1,62 @@
 iekf_slam_node:
   ros__parameters:
+    # -----------------------------
+    # IO / Topics / Buffers
+    # -----------------------------
     imu_topic: "/imu0"
     lidar_topic: "/livox/lidar"
     imu_buffer_size: 20000
+
+    # -----------------------------
+    # LiDAR Preprocess
+    # -----------------------------
     reflectivity_filter.enable: true
     reflectivity_filter.min: 1
     reflectivity_filter.max: 255
+    deskew.enable: true
+    downsample.enable: true
+    downsample.leaf_size: 0.2
+
+    # -----------------------------
+    # IMU Initialization
+    # -----------------------------
+    imu_init.window_size: 600
+    imu_init.gyro_var_threshold: 1.0e-4
+    imu_init.accel_var_threshold: 5.0e-2
+    imu_init.gravity_norm: 9.81
+
+    # -----------------------------
+    # IEKF Predictor (process noise)
+    # -----------------------------
+    predictor_noise.sigma_acc: 0.10
+    predictor_noise.sigma_gyro: 0.01
+    predictor_noise.sigma_bg_rw: 1.0e-4
+    predictor_noise.sigma_ba_rw: 1.0e-3
+    predictor_noise.sigma_g_rw: 0.0
+
+    # -----------------------------
+    # IEKF Updater (scan-to-map)
+    # -----------------------------
+    updater.enable: true
+    updater.max_iterations: 2
+    updater.max_correspondence_distance: 0.5
+    updater.plane_k_neighbors: 8
+    updater.plane_max_eigen_ratio: 0.2
+    updater.sigma_point_to_plane: 0.2
+    updater.max_abs_point_to_plane_residual: 0.7
+    updater.max_update_points: 2500
+
+    # -----------------------------
+    # Local Map
+    # -----------------------------
+    local_map.voxel_size: 0.5
+    local_map.max_voxels: 200000
+    local_map.window.enable: true
+    local_map.window.radius_xy: 60.0
+    local_map.window.half_height: 15.0
+
+    # -----------------------------
+    # Extrinsic (LiDAR -> IMU)
+    # -----------------------------
+    extrinsic.lidar_to_imu.R: [-0.0048858, -0.9997687, -0.0209424, 0.9999720, -0.0047662, -0.0057583, 0.0056571, -0.0209700, 0.9997641]
+    extrinsic.lidar_to_imu.P: [0.083, 0.077, 0.035]

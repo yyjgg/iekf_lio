@@ -1,0 +1,29 @@
+[0.012s] Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio -- -j20 -l20
+[0.110s] [ 16%] Built target test_build_node
+[0.110s] [ 33%] Built target livox_sub_test
+[0.116s] [ 41%] [32mBuilding CXX object CMakeFiles/iekf_slam_node.dir/src/iekf_slam_node.cpp.o[0m
+[10.380s] [ 50%] [32m[1mLinking CXX executable iekf_slam_node[0m
+[11.875s] [100%] Built target iekf_slam_node
+[11.884s] Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio -- -j20 -l20
+[11.892s] Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio
+[11.898s] -- Install configuration: ""
+[11.900s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node
+[11.911s] -- Set non-toolchain portion of runtime path of "/home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/iekf_slam_node" to ""
+[11.912s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/test_build_node
+[11.914s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/lib/iekf_lio/livox_sub_test
+[11.914s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/package_run_dependencies/iekf_lio
+[11.914s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/parent_prefix_path/iekf_lio
+[11.914s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.sh
+[11.914s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/ament_prefix_path.dsv
+[11.914s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.sh
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/environment/path.dsv
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.bash
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.sh
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.zsh
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/local_setup.dsv
+[11.915s] -- Installing: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.dsv
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/ament_index/resource_index/packages/iekf_lio
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig.cmake
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/cmake/iekf_lioConfig-version.cmake
+[11.915s] -- Up-to-date: /home/yyj/IEKF_LIO_node/src/iekf_lio/install/iekf_lio/share/iekf_lio/package.xml
+[11.916s] Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio

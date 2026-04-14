@@ -2,6 +2,13 @@
 
 #include <cmath>
 
+#if defined(IEKF_LIO_USE_SOPHUS) && __has_include(<sophus/so3.hpp>)
+#include <sophus/so3.hpp>
+#define IEKF_LIO_SOPHUS_ACTIVE 1
+#else
+#define IEKF_LIO_SOPHUS_ACTIVE 0
+#endif
+
 namespace iekf_lio
 {
 namespace
@@ -21,6 +28,9 @@ Eigen::Matrix3d skew(const Eigen::Vector3d & w)
 
 Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta)
 {
+#if IEKF_LIO_SOPHUS_ACTIVE
+  return Sophus::SO3d::exp(theta).matrix();
+#else
   const double angle = theta.norm();
   const Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
   const Eigen::Matrix3d K = skew(theta);
@@ -33,6 +43,7 @@ Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta)
   const double a = std::sin(angle) / angle;
   const double b = (1.0 - std::cos(angle)) / (angle * angle);
   return I + a * K + b * K2;
+#endif
 }
 
 }  // namespace

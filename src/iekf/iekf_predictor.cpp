@@ -2,6 +2,13 @@
 
 #include <cmath>
 
+#if defined(IEKF_LIO_USE_SOPHUS) && __has_include(<sophus/so3.hpp>)
+#include <sophus/so3.hpp>
+#define IEKF_LIO_SOPHUS_ACTIVE 1
+#else
+#define IEKF_LIO_SOPHUS_ACTIVE 0
+#endif
+
 namespace iekf_lio
 {
 namespace
@@ -24,6 +31,9 @@ Eigen::Matrix3d skew(const Eigen::Vector3d & w)
 
 Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta)
 {
+#if IEKF_LIO_SOPHUS_ACTIVE
+  return Sophus::SO3d::exp(theta).matrix();
+#else
   const double angle = theta.norm();
   const Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
   const Eigen::Matrix3d K = skew(theta);
@@ -36,6 +46,7 @@ Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta)
   const double a = std::sin(angle) / angle;
   const double b = (1.0 - std::cos(angle)) / (angle * angle);
   return I + a * K + b * K2;
+#endif
 }
 
 }  // namespace
@@ -47,13 +58,28 @@ void IekfPredictor::initializeState(IekfState18 & state) const
   state.is_initialized = true;
 }
 
-void IekfPredictor::predictWithMidpoint(const ImuTrack & imu_track, IekfState18 & state) const
+void IekfPredictor::predictWithMidpoint(
+  const ImuTrack & imu_track,
+  IekfState18 & state,
+  std::vector<ImuPredictedState> * predicted_states) const
 {
   if (!state.is_initialized) {
     initializeState(state);
   }
   if (imu_track.size() < 2) {
+    if (predicted_states) {
+      predicted_states->clear();
+      if (!imu_track.empty()) {
+        predicted_states->push_back(ImuPredictedState {imu_track.front().time_s, state.x.p_wb, state.x.r_wb});
+      }
+    }
     return;
+  }
+
+  if (predicted_states) {
+    predicted_states->clear();
+    predicted_states->reserve(imu_track.size());
+    predicted_states->push_back(ImuPredictedState {imu_track.front().time_s, state.x.p_wb, state.x.r_wb});
   }
 
   for (std::size_t i = 0; i + 1 < imu_track.size(); ++i) {
@@ -104,6 +130,10 @@ void IekfPredictor::predictWithMidpoint(const ImuTrack & imu_track, IekfState18 
     const IekfMat18 Phi = IekfMat18::Identity() + F * dt;
     const IekfMat18 Qd = (G * Qc * G.transpose()) * dt;
     state.p_cov = Phi * state.p_cov * Phi.transpose() + Qd;
+
+    if (predicted_states) {
+      predicted_states->push_back(ImuPredictedState {nxt.time_s, state.x.p_wb, state.x.r_wb});
+    }
   }
 }
 

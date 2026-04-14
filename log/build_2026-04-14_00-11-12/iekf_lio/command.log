@@ -1,0 +1,4 @@
+Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio -- -j20 -l20
+Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio -- -j20 -l20
+Invoking command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio
+Invoked command in '/home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/yyj/IEKF_LIO_node/src/iekf_lio/build/iekf_lio
