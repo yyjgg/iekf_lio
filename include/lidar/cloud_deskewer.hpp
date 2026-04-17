@@ -26,8 +26,8 @@ struct LidarToImuExtrinsic
 class CloudDeskewer
 {
 public:
-  bool deskewToImuEnd(
-    LidarScan & scan,
+  LidarScanXYZ deskewToImuEnd(
+    const LidarScan & scan,
     const std::vector<ImuPredictedState> & imu_states,
     const LidarToImuExtrinsic & extrinsic) const;
 

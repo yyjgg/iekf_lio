@@ -91,7 +91,7 @@ bool fitPlaneFromNeighbors(
 }  // namespace
 
 bool IekfUpdater::updatePoseWithPointToMap(
-  const LidarScan & scan_i_end,
+  const LidarScanXYZ & scan_i_end,
   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr & map_cloud_w,
   IekfState18 & state,
   IekfUpdateResult * result) const
@@ -99,7 +99,10 @@ bool IekfUpdater::updatePoseWithPointToMap(
   if (result != nullptr) {
     *result = IekfUpdateResult {};
   }
-  if (!state.is_initialized || map_cloud_w == nullptr || scan_i_end.points.empty()) {
+  if (
+    !state.is_initialized || map_cloud_w == nullptr || scan_i_end.points == nullptr ||
+    scan_i_end.points->empty())
+  {
     return false;
   }
 
@@ -110,69 +113,101 @@ bool IekfUpdater::updatePoseWithPointToMap(
   const double max_dist2 = config_.max_correspondence_distance ;//点的最近临近邻搜索的距离阈值，单位为米
   const int k_neighbors = std::max(3, config_.plane_k_neighbors);//平面拟合时的邻居数量
   const double sigma2 = config_.sigma_point_to_plane * config_.sigma_point_to_plane;
+  const double inv_sigma2 = 1.0 / sigma2;
   const double max_abs_residual = std::max(1e-3, config_.max_abs_point_to_plane_residual);
   const std::size_t max_points = static_cast<std::size_t>(std::max(10, config_.max_update_points));
-  const std::size_t total_points = scan_i_end.points.size();
+  const std::size_t total_points = scan_i_end.points->size();
   const std::size_t stride = std::max<std::size_t>(1, (total_points + max_points - 1) / max_points);
   bool updated_any = false;
+  const Eigen::Matrix<double, 18, 18> I18 = Eigen::Matrix<double, 18, 18>::Identity();
+
+  const Eigen::LDLT<Eigen::Matrix<double, 18, 18>> prior_ldlt(state.p_cov);
+  if (prior_ldlt.info() != Eigen::Success) {
+    return false;
+  }
+  const Eigen::Matrix<double, 18, 18> P_inv = prior_ldlt.solve(I18);
 
   for (int iter = 0; iter < max_iters; ++iter) {
-    std::vector<Eigen::Matrix<double, 1, 18>> H_rows;
-    std::vector<double> r_vals;
-    H_rows.reserve(std::min<std::size_t>(scan_i_end.points.size(), max_points));
-    r_vals.reserve(std::min<std::size_t>(scan_i_end.points.size(), max_points));
-
-    std::vector<int> nn_idx(static_cast<std::size_t>(k_neighbors));
-    std::vector<float> nn_dist2(static_cast<std::size_t>(k_neighbors));
+    const std::size_t sampled_points = (total_points + stride - 1) / stride;
+    Eigen::Matrix<double, 18, 18> info_HtRinvH = Eigen::Matrix<double, 18, 18>::Zero();
+    Eigen::Matrix<double, 18, 1> info_HtRinvNu = Eigen::Matrix<double, 18, 1>::Zero();
+    std::size_t corr = 0;
     double err2_sum = 0.0;
 
-    for (std::size_t idx = 0; idx < scan_i_end.points.size(); idx += stride) {
-      const auto & pt = scan_i_end.points[idx];
-      if (!std::isfinite(pt.x) || !std::isfinite(pt.y) || !std::isfinite(pt.z)) {
-        continue;
-      }
-      const Eigen::Vector3d p_i(pt.x, pt.y, pt.z);
-      const Eigen::Vector3d p_w = state.x.r_wb * p_i + state.x.p_wb;
-
-      pcl::PointXYZ q;
-      q.x = static_cast<float>(p_w.x());
-      q.y = static_cast<float>(p_w.y());
-      q.z = static_cast<float>(p_w.z());
-      const int found = kdtree.nearestKSearch(q, k_neighbors, nn_idx, nn_dist2);
-      if (found < k_neighbors || nn_dist2[static_cast<std::size_t>(k_neighbors - 1)] > max_dist2) {
-        continue;
-      }
-
+    // Information-form accumulation (parallel):
+    // A = P^{-1} + sum(H_i^T R^{-1} H_i), b = sum(H_i^T R^{-1} * (-r_i)).
+#pragma omp parallel
+    {
+      Eigen::Matrix<double, 18, 18> info_local = Eigen::Matrix<double, 18, 18>::Zero();
+      Eigen::Matrix<double, 18, 1> b_local = Eigen::Matrix<double, 18, 1>::Zero();
+      std::size_t corr_local = 0;
+      double err2_local = 0.0;
+      std::vector<int> nn_idx(static_cast<std::size_t>(k_neighbors));
+      std::vector<float> nn_dist2(static_cast<std::size_t>(k_neighbors));
       std::vector<Eigen::Vector3d> neighbors;
       neighbors.reserve(static_cast<std::size_t>(k_neighbors));
-      for (int k = 0; k < k_neighbors; ++k) {
-        const pcl::PointXYZ & mp = map_cloud_w->at(static_cast<std::size_t>(nn_idx[static_cast<std::size_t>(k)]));
-        neighbors.emplace_back(mp.x, mp.y, mp.z);
+
+#pragma omp for schedule(static)
+      for (std::int64_t s = 0; s < static_cast<std::int64_t>(sampled_points); ++s) {
+        const std::size_t sampled_idx = static_cast<std::size_t>(s);
+        const std::size_t idx = sampled_idx * stride;
+        if (idx >= scan_i_end.points->size()) {
+          continue;
+        }
+
+        const auto & pt = scan_i_end.points->at(idx);
+        if (!std::isfinite(pt.x) || !std::isfinite(pt.y) || !std::isfinite(pt.z)) {
+          continue;
+        }
+        const Eigen::Vector3d p_i(pt.x, pt.y, pt.z);
+        const Eigen::Vector3d p_w = state.x.r_wb * p_i + state.x.p_wb;
+
+        pcl::PointXYZ q;
+        q.x = static_cast<float>(p_w.x());
+        q.y = static_cast<float>(p_w.y());
+        q.z = static_cast<float>(p_w.z());
+        const int found = kdtree.nearestKSearch(q, k_neighbors, nn_idx, nn_dist2);
+        if (found < k_neighbors || nn_dist2[static_cast<std::size_t>(k_neighbors - 1)] > max_dist2) {
+          continue;
+        }
+
+        neighbors.clear();
+        for (int k = 0; k < k_neighbors; ++k) {
+          const pcl::PointXYZ & mp = map_cloud_w->at(static_cast<std::size_t>(
+                nn_idx[static_cast<std::size_t>(k)]));
+          neighbors.emplace_back(mp.x, mp.y, mp.z);
+        }
+
+        Eigen::Vector3d n_w = Eigen::Vector3d::Zero();
+        Eigen::Vector3d c_w = Eigen::Vector3d::Zero();
+        if (!fitPlaneFromNeighbors(neighbors, config_.plane_max_eigen_ratio, &n_w, &c_w)) {
+          continue;
+        }
+
+        const double r_i = n_w.dot(p_w - c_w);
+        if (std::abs(r_i) > max_abs_residual) {
+          continue;
+        }
+
+        Eigen::Matrix<double, 1, 18> H_i = Eigen::Matrix<double, 1, 18>::Zero();
+        H_i.block<1, 3>(0, 0) = n_w.transpose();
+        H_i.block<1, 3>(0, 6) = -n_w.transpose() * state.x.r_wb * skew(p_i);
+
+        info_local.noalias() += inv_sigma2 * (H_i.transpose() * H_i);
+        b_local.noalias() += inv_sigma2 * (H_i.transpose() * (-r_i));
+        ++corr_local;
+        err2_local += r_i * r_i;
       }
 
-      Eigen::Vector3d n_w = Eigen::Vector3d::Zero();
-      Eigen::Vector3d c_w = Eigen::Vector3d::Zero();
-      if (!fitPlaneFromNeighbors(neighbors, config_.plane_max_eigen_ratio, &n_w, &c_w)) {
-        continue;
+#pragma omp critical
+      {
+        info_HtRinvH += info_local;
+        info_HtRinvNu += b_local;
+        corr += corr_local;
+        err2_sum += err2_local;
       }
-
-      const double r_i = n_w.dot(p_w - c_w);
-      if (std::abs(r_i) > max_abs_residual) {
-        continue;
-      }
-      Eigen::Matrix<double, 1, 18> H_i = Eigen::Matrix<double, 1, 18>::Zero();
-      H_i.block<1, 3>(0, 0) = n_w.transpose();
-      H_i.block<1, 3>(0, 6) = -n_w.transpose() * state.x.r_wb * skew(p_i);
-
-      H_rows.push_back(H_i);
-      r_vals.push_back(r_i);
-      err2_sum += r_i * r_i;
-      // if (H_rows.size() >= max_points) {
-      //   break;
-      // }
     }
 
-    const std::size_t corr = H_rows.size();
     if (corr == 0) {
       if (result != nullptr) {
         result->correspondences = corr;
@@ -188,22 +223,12 @@ bool IekfUpdater::updatePoseWithPointToMap(
       result->iterations = iter + 1;
     }
 
-    Eigen::MatrixXd H(corr, 18);
-    Eigen::VectorXd r(corr);
-    for (std::size_t i = 0; i < corr; ++i) {
-      H.row(static_cast<Eigen::Index>(i)) = H_rows[i];
-      r(static_cast<Eigen::Index>(i)) = r_vals[i];
-    }
-
-    const Eigen::MatrixXd S = H * state.p_cov * H.transpose()
-      + sigma2 * Eigen::MatrixXd::Identity(static_cast<Eigen::Index>(corr), static_cast<Eigen::Index>(corr));
-    const Eigen::LDLT<Eigen::MatrixXd> ldlt(S);
-    if (ldlt.info() != Eigen::Success) {
+    const Eigen::Matrix<double, 18, 18> A = P_inv + info_HtRinvH;
+    const Eigen::LDLT<Eigen::Matrix<double, 18, 18>> ldlt_A(A);
+    if (ldlt_A.info() != Eigen::Success) {
       break;
     }
-    // Innovation is z - h(x). Here z = 0 for point-to-plane, h(x) = r, so innovation = -r.
-    const Eigen::VectorXd y = ldlt.solve(-r);// y = S^-1 * (-r) 最初优化方向错误
-    const Eigen::VectorXd delta = state.p_cov * H.transpose() * y;
+    const Eigen::Matrix<double, 18, 1> delta = ldlt_A.solve(info_HtRinvNu);
 
     state.x.p_wb += delta.segment<3>(0);
     state.x.v_wb += delta.segment<3>(3);
@@ -214,14 +239,7 @@ bool IekfUpdater::updatePoseWithPointToMap(
     updated_any = true;
 
     if (iter == max_iters - 1) {
-      const Eigen::MatrixXd HP = H * state.p_cov;
-      const Eigen::MatrixXd X = ldlt.solve(HP);
-      const Eigen::MatrixXd K = X.transpose();  // 18 x N
-      const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(18, 18);
-      const Eigen::MatrixXd KH = K * H;
-      const Eigen::MatrixXd KR = K * (sigma2 * Eigen::MatrixXd::Identity(
-        static_cast<Eigen::Index>(corr), static_cast<Eigen::Index>(corr)));
-      state.p_cov = (I - KH) * state.p_cov * (I - KH).transpose() + KR * K.transpose();
+      state.p_cov = ldlt_A.solve(I18);
     }
 
     if (result != nullptr) {

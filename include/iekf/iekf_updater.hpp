@@ -38,7 +38,7 @@ public:
   void setConfig(const IekfUpdaterConfig & config) { config_ = config; }
 
   bool updatePoseWithPointToMap(
-    const LidarScan & scan_i_end,
+    const LidarScanXYZ & scan_i_end,
     const pcl::PointCloud<pcl::PointXYZ>::ConstPtr & map_cloud_w,
     IekfState18 & state,
     IekfUpdateResult * result = nullptr) const;

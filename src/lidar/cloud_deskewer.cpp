@@ -1,8 +1,10 @@
 #include "lidar/cloud_deskewer.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <iostream>
-#include <limits>
+#include <omp.h>
+#include <utility>
 
 namespace iekf_lio
 {
@@ -60,53 +62,85 @@ bool CloudDeskewer::interpolateState(
   return true;
 }
 
-bool CloudDeskewer::deskewToImuEnd(
-  LidarScan & scan,
+LidarScanXYZ CloudDeskewer::deskewToImuEnd(
+  const LidarScan & scan,
   const std::vector<ImuPredictedState> & imu_states,
   const LidarToImuExtrinsic & extrinsic) const
 {
+  LidarScanXYZ out;
+  out.frame_id = scan.frame_id;
+  out.scan_begin_time_s = scan.scan_begin_time_s;
+  out.scan_end_time_s = scan.scan_end_time_s;
+  out.timebase_ns = scan.timebase_ns;
+  out.points->clear();
+
   if (scan.points.empty() || imu_states.empty()) {
-    return false;
+    return out;
   }
 
   ImuPredictedState end_state;
   if (!interpolateState(imu_states, scan.scan_end_time_s, &end_state)) {
-    return false;
+    return out;
   }
   const Eigen::Matrix3d r_iw_end = end_state.r_wi.transpose();
-  bool all_interpolated = true;
-  std::size_t skipped_points = 0;
+  const double scan_begin_time_s = scan.scan_begin_time_s;
+  const double scan_end_time_s = scan.scan_end_time_s;
+  const std::size_t total_points = scan.points.size();
+  std::uint64_t skipped_points = 0;
 
-  for (auto & pt : scan.points) {
-    const double pt_time = scan.scan_begin_time_s + pt.relative_time_s;
-    ImuPredictedState st;
-    if (!interpolateState(imu_states, pt_time, &st)) {
-      all_interpolated = false;
-      ++skipped_points;
-      const float qnan = std::numeric_limits<float>::quiet_NaN();
-      pt.x = qnan;
-      pt.y = qnan;
-      pt.z = qnan;
-      if (skipped_points <= 5) {
-        std::cerr << "[CloudDeskewer][WARN] interpolateState failed for point_time="
-                  << pt_time << ", skip this point.\n";
+  const int num_threads = std::max(1, omp_get_max_threads());
+  std::vector<std::vector<pcl::PointXYZ>> thread_points(static_cast<std::size_t>(num_threads));
+
+#pragma omp parallel reduction(+:skipped_points)
+  {
+    const int tid = omp_get_thread_num();
+    auto & local_points = thread_points[static_cast<std::size_t>(tid)];
+    local_points.reserve(total_points / static_cast<std::size_t>(num_threads) + 1);
+
+#pragma omp for schedule(static)
+    for (std::int64_t i = 0; i < static_cast<std::int64_t>(total_points); ++i) {
+      const auto & pt = scan.points[static_cast<std::size_t>(i)];
+      const double pt_time = scan_begin_time_s + pt.relative_time_s;
+      ImuPredictedState st;
+      if (!interpolateState(imu_states, pt_time, &st)) {
+        ++skipped_points;
+        continue;
       }
-      continue;
-    }
 
-    const Eigen::Vector3d p_l(pt.x, pt.y, pt.z);
-    const Eigen::Vector3d p_i = extrinsic.r_il * p_l + extrinsic.t_il;
-    const Eigen::Vector3d p_w = st.r_wi * p_i + st.p_wi;
-    const Eigen::Vector3d p_i_end = r_iw_end * (p_w - end_state.p_wi);
-    pt.x = static_cast<float>(p_i_end.x());
-    pt.y = static_cast<float>(p_i_end.y());
-    pt.z = static_cast<float>(p_i_end.z());
+      const Eigen::Vector3d p_l(pt.x, pt.y, pt.z);
+      const Eigen::Vector3d p_i = extrinsic.r_il * p_l + extrinsic.t_il;
+      const Eigen::Vector3d p_w = st.r_wi * p_i + st.p_wi;
+      const Eigen::Vector3d p_i_end = r_iw_end * (p_w - end_state.p_wi);
+
+      pcl::PointXYZ out_pt;
+      out_pt.x = static_cast<float>(p_i_end.x());
+      out_pt.y = static_cast<float>(p_i_end.y());
+      out_pt.z = static_cast<float>(p_i_end.z());
+      local_points.push_back(out_pt);
+    }
   }
+
+  std::size_t kept_points = 0;
+  for (const auto & local_points : thread_points) {
+    kept_points += local_points.size();
+  }
+  out.points->reserve(kept_points);
+  for (auto & local_points : thread_points) {
+    out.points->insert(
+      out.points->end(),
+      std::make_move_iterator(local_points.begin()),
+      std::make_move_iterator(local_points.end()));
+  }
+  out.points->width = static_cast<std::uint32_t>(out.points->size());
+  out.points->height = 1;
+  out.points->is_dense = false;
+
   if (skipped_points > 0) {
     std::cerr << "[CloudDeskewer][WARN] skipped points due to interpolation failure: "
-              << skipped_points << "/" << scan.points.size() << "\n";
+              << skipped_points << "/" << total_points
+              << ", scan_time_range=[" << scan_begin_time_s << ", " << scan_end_time_s << "]\n";
   }
-  return all_interpolated;
+  return out;
 }
 
 }  // namespace iekf_lio

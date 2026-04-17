@@ -11,11 +11,16 @@ iekf_slam_node:
     # LiDAR Preprocess
     # -----------------------------
     reflectivity_filter.enable: true
-    reflectivity_filter.min: 1
+    reflectivity_filter.min: 5
     reflectivity_filter.max: 255
+    distance_filter.enable: true
+    distance_filter.min_m: 2.0
+    distance_filter.max_m: 200.0
     deskew.enable: true
     downsample.enable: true
-    downsample.leaf_size: 0.2
+    downsample.leaf_size: 0.4
+    downsample.update_leaf_size: 0.8
+    downsample.map_leaf_size: 0.4
 
     # -----------------------------
     # IMU Initialization
@@ -38,22 +43,47 @@ iekf_slam_node:
     # IEKF Updater (scan-to-map)
     # -----------------------------
     updater.enable: true
-    updater.max_iterations: 2
-    updater.max_correspondence_distance: 0.5
-    updater.plane_k_neighbors: 8
-    updater.plane_max_eigen_ratio: 0.2
-    updater.sigma_point_to_plane: 0.2
-    updater.max_abs_point_to_plane_residual: 0.7
-    updater.max_update_points: 2500
+    updater.max_iterations: 2 #每次扫描迭代优化的最大次数
+    updater.max_correspondence_distance: 0.5 #构造的平面中的点到平面残差的最大距离，过大可能引入错误匹配，过小可能匹配不足，能衡量平面好坏
+    updater.plane_k_neighbors: 8 #每个特征点寻找平面特征时的邻域点数量，过大可能引入非平面点，过小可能平面拟合不稳定
+    updater.plane_max_eigen_ratio: 0.2 #允许的最大平面特征点邻域内的最大特征值与次大特征值的比值，过大可能不是平面，过小可能是边界
+    updater.sigma_point_to_plane: 0.2 #点到平面残差的标准差，用于更新过程的噪声矩阵R，过大可能匹配不足，过小可能引入错误匹配，现在采用的是固定值
+    updater.max_abs_point_to_plane_residual: 0.7 #点到平面残差的绝对值最大值，过大可能引入错误匹配，过小可能匹配不足
+    updater.max_update_points: 2500 #每次迭代优化中使用的最大点数，控制优化的计算量，过大可能导致优化过慢，过小可能优化效果不好
 
     # -----------------------------
     # Local Map
     # -----------------------------
     local_map.voxel_size: 0.5
-    local_map.max_voxels: 200000
-    local_map.window.enable: true
-    local_map.window.radius_xy: 60.0
-    local_map.window.half_height: 15.0
+    local_map.block_size: 15.0
+    local_map.history.max_blocks: 200
+    local_map.history.enable: true
+    local_map.history.radius_xy: 400.0
+    local_map.history.half_height: 100.0
+    local_map.active.enable: true
+    local_map.active.radius_xy: 220.0
+    local_map.active.half_height: 80.0
+    local_map.active.angle.enable: true
+    local_map.active.angle.half_fov_deg: 40.0
+
+    # -----------------------------
+    # Publish / Visualization
+    # -----------------------------
+    publish.odom_topic: "/iekf/odom"
+    publish.path_topic: "/iekf/path"
+    publish.points_world_topic: "/iekf/points_world"
+    publish.map_frame_id: "map"
+    publish.base_frame_id: "base_link"
+    publish.path.max_length: 2000
+    publish.tf.enable: true
+
+    # -----------------------------
+    # Runtime / OpenMP
+    # -----------------------------
+    runtime.omp_num_threads: 16
+    runtime.omp_dynamic: false
+    runtime.omp_proc_bind: true
+    runtime.omp_places: "cores"
 
     # -----------------------------
     # Extrinsic (LiDAR -> IMU)

@@ -18,6 +18,7 @@ find_package(PCL REQUIRED COMPONENTS common kdtree filters)
 find_package(geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(livox_ros_driver2 REQUIRED)
+find_package(OpenMP REQUIRED)
 find_package(Sophus QUIET)
 
 add_executable(iekf_slam_node
@@ -34,10 +35,15 @@ target_include_directories(iekf_slam_node SYSTEM PUBLIC ${PCL_INCLUDE_DIRS})
 ament_target_dependencies(iekf_slam_node
   rclcpp
   sensor_msgs
+  nav_msgs
+  tf2
+  tf2_ros
+  geometry_msgs
   pcl_conversions
   livox_ros_driver2
 )
 target_link_libraries(iekf_slam_node Eigen3::Eigen ${PCL_LIBRARIES})
+target_link_libraries(iekf_slam_node OpenMP::OpenMP_CXX)
 if(Sophus_FOUND)
   target_compile_definitions(iekf_slam_node PRIVATE IEKF_LIO_USE_SOPHUS=1)
   if(TARGET Sophus::Sophus)
@@ -60,6 +66,13 @@ ament_target_dependencies(livox_sub_test rclcpp livox_ros_driver2)
 install(TARGETS
   livox_sub_test
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+  launch
+  config
+  rviz
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
