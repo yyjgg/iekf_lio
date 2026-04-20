@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -23,13 +24,22 @@ struct LidarToImuExtrinsic
   Eigen::Vector3d t_il = Eigen::Vector3d::Zero();
 };
 
+struct CloudDeskewTiming
+{
+  std::uint64_t end_state_interp_ns = 0;
+  std::uint64_t point_interp_ns = 0;
+  std::uint64_t point_transform_ns = 0;
+  std::uint64_t output_merge_ns = 0;
+};
+
 class CloudDeskewer
 {
 public:
   LidarScanXYZ deskewToImuEnd(
     const LidarScan & scan,
     const std::vector<ImuPredictedState> & imu_states,
-    const LidarToImuExtrinsic & extrinsic) const;
+    const LidarToImuExtrinsic & extrinsic,
+    CloudDeskewTiming * timing = nullptr) const;
 
 private:
   bool interpolateState(
