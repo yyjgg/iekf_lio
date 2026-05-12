@@ -16,6 +16,10 @@ struct ImuPredictedState
   double time_s = 0.0;
   Eigen::Vector3d p_wi = Eigen::Vector3d::Zero();
   Eigen::Matrix3d r_wi = Eigen::Matrix3d::Identity();
+  Eigen::Vector3d gyro_mid_unbiased_rps = Eigen::Vector3d::Zero();
+  Eigen::Vector3d linear_accel_mid_w_mps2 = Eigen::Vector3d::Zero();
+  double yaw_mid_rad = 0.0;
+  bool is_propagated = false;
 };
 
 struct LidarToImuExtrinsic

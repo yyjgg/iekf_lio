@@ -51,6 +51,21 @@ Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta)
 #endif
 }
 
+double yawFromRotation(const Eigen::Matrix3d & r_wb)
+{
+  return std::atan2(r_wb(1, 0), r_wb(0, 0));
+}
+
+ImuPredictedState makePredictedState(
+  double time_s,
+  bool is_propagated)
+{
+  ImuPredictedState out;
+  out.time_s = time_s;
+  out.is_propagated = is_propagated;
+  return out;
+}
+
 }  // namespace
 
 void IekfPredictor::initializeState(IekfState18 & state) const
@@ -60,11 +75,36 @@ void IekfPredictor::initializeState(IekfState18 & state) const
   state.is_initialized = true;
 }
 
+void IekfPredictor::setPdrConfig(const IekfPredictorPdrConfig & config)
+{
+  pdr_config_ = config;
+  accel_norm_filter_ = std::make_unique<FirstOrderLowPassFilter>(
+    pdr_config_.accel_norm_lpf_cutoff_hz);
+}
+
+void IekfPredictor::setAccelNormFilter(std::unique_ptr<ScalarFilter> filter)
+{
+  if (filter == nullptr) {
+    accel_norm_filter_ = std::make_unique<FirstOrderLowPassFilter>(
+      pdr_config_.accel_norm_lpf_cutoff_hz);
+    return;
+  }
+  accel_norm_filter_ = std::move(filter);
+}
+
+void IekfPredictor::resetPdrRuntime()
+{
+  if (accel_norm_filter_ != nullptr) {
+    accel_norm_filter_->reset();
+  }
+}
+
 void IekfPredictor::predictWithMidpoint(
   const ImuTrack & imu_track,
   IekfState18 & state,
   std::vector<ImuPredictedState> * predicted_states,
-  IekfPredictorTiming * timing) const
+  IekfPredictorTiming * timing,
+  std::vector<PdrPreprocessedSample> * pdr_samples)
 {
   if (timing != nullptr) {
     *timing = IekfPredictorTiming {};
@@ -76,8 +116,12 @@ void IekfPredictor::predictWithMidpoint(
     if (predicted_states) {
       predicted_states->clear();
       if (!imu_track.empty()) {
-        predicted_states->push_back(ImuPredictedState {imu_track.front().time_s, state.x.p_wb, state.x.r_wb});
+        predicted_states->push_back(
+          makePredictedState(imu_track.front().time_s, false));
       }
+    }
+    if (pdr_samples) {
+      pdr_samples->clear();
     }
     return;
   }
@@ -85,7 +129,12 @@ void IekfPredictor::predictWithMidpoint(
   if (predicted_states) {
     predicted_states->clear();
     predicted_states->reserve(imu_track.size());
-    predicted_states->push_back(ImuPredictedState {imu_track.front().time_s, state.x.p_wb, state.x.r_wb});
+    predicted_states->push_back(
+      makePredictedState(imu_track.front().time_s, false));
+  }
+  if (pdr_samples) {
+    pdr_samples->clear();
+    pdr_samples->reserve(imu_track.size());
   }
 
   for (std::size_t i = 0; i + 1 < imu_track.size(); ++i) {
@@ -102,11 +151,18 @@ void IekfPredictor::predictWithMidpoint(
     const Eigen::Vector3d a1 = nxt.accel_mps2 - state.x.b_a;
     const Eigen::Vector3d w_mid = 0.5 * (w0 + w1);
     const Eigen::Vector3d a_mid = 0.5 * (a0 + a1);
+    const double accel_norm = a_mid.norm();
+    const double gravity_norm = state.x.g_w.norm();
+    const double accel_norm_minus_g = std::abs(accel_norm - gravity_norm);
+    const double accel_norm_minus_g_lpf = (accel_norm_filter_ != nullptr)
+      ? accel_norm_filter_->update(accel_norm_minus_g, dt)
+      : accel_norm_minus_g;
 
     const auto state_prop_t0 = SteadyClock::now();
     const Eigen::Matrix3d dR_half = expSO3(0.5 * dt * w_mid);
     const Eigen::Matrix3d R_mid = state.x.r_wb * dR_half;
     const Eigen::Vector3d a_world = R_mid * a_mid + state.x.g_w;
+    const Eigen::Vector3d w_world = R_mid * w_mid;
 
     state.x.p_wb += state.x.v_wb * dt + 0.5 * a_world * dt * dt;
     state.x.v_wb += a_world * dt;
@@ -167,12 +223,30 @@ void IekfPredictor::predictWithMidpoint(
 
     if (predicted_states) {
       const auto record_t0 = SteadyClock::now();
-      predicted_states->push_back(ImuPredictedState {nxt.time_s, state.x.p_wb, state.x.r_wb});
+      ImuPredictedState pred_state = makePredictedState(nxt.time_s, true);
+      pred_state.p_wi = state.x.p_wb;
+      pred_state.r_wi = state.x.r_wb;
+      pred_state.gyro_mid_unbiased_rps = w_world;
+      pred_state.linear_accel_mid_w_mps2 = a_world;
+      pred_state.yaw_mid_rad = yawFromRotation(R_mid);
+      predicted_states->push_back(pred_state);
       if (timing != nullptr) {
         timing->state_record_ns += static_cast<std::uint64_t>(
           std::chrono::duration_cast<std::chrono::nanoseconds>(
             SteadyClock::now() - record_t0).count());
       }
+    }
+
+    if (pdr_samples) {
+      PdrPreprocessedSample sample;
+      sample.time_s = cur.time_s + 0.5 * dt;
+      sample.accel_unbiased_b_mps2 = a_mid;
+      sample.gyro_unbiased_b_rps = w_mid;
+      sample.r_mid_wb = R_mid;
+      sample.accel_norm_mps2 = accel_norm;
+      sample.accel_norm_minus_g_mps2 = accel_norm_minus_g;
+      sample.accel_norm_minus_g_lpf_mps2 = accel_norm_minus_g_lpf;
+      pdr_samples->push_back(sample);
     }
   }
 }

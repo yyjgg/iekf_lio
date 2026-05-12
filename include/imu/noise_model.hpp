@@ -25,6 +25,7 @@ struct ImuInitResult
   Eigen::Vector3d gyro_bias = Eigen::Vector3d::Zero();
   Eigen::Vector3d accel_bias = Eigen::Vector3d::Zero();
   Eigen::Vector3d gravity_w = Eigen::Vector3d(0.0, 0.0, -9.81);
+  Eigen::Matrix3d initial_r_wb = Eigen::Matrix3d::Identity();
   double gyro_var_norm = 0.0;
   double accel_var_norm = 0.0;
 };

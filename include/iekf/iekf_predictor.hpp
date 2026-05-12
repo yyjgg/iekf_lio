@@ -1,11 +1,14 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "iekf/iekf_state.hpp"
 #include "imu/imu_types.hpp"
 #include "lidar/cloud_deskewer.hpp"
+#include "pdr/pdr_types.hpp"
+#include "pdr/scalar_filter.hpp"
 
 namespace iekf_lio
 {
@@ -26,20 +29,33 @@ struct IekfPredictorTiming
   std::uint64_t state_record_ns = 0;
 };
 
+struct IekfPredictorPdrConfig
+{
+  double accel_norm_lpf_cutoff_hz = 5.0;
+};
+
 class IekfPredictor
 {
 public:
-  explicit IekfPredictor(IekfPredictorNoise noise = {}) : noise_(noise) {}
+  explicit IekfPredictor(IekfPredictorNoise noise = {})
+  : noise_(noise),
+    accel_norm_filter_(std::make_unique<FirstOrderLowPassFilter>()) {}
 
   void initializeState(IekfState18 & state) const;
+  void setPdrConfig(const IekfPredictorPdrConfig & config);
+  void setAccelNormFilter(std::unique_ptr<ScalarFilter> filter);
+  void resetPdrRuntime();
   void predictWithMidpoint(
     const ImuTrack & imu_track,
     IekfState18 & state,
     std::vector<ImuPredictedState> * predicted_states = nullptr,
-    IekfPredictorTiming * timing = nullptr) const;
+    IekfPredictorTiming * timing = nullptr,
+    std::vector<PdrPreprocessedSample> * pdr_samples = nullptr);
 
 private:
   IekfPredictorNoise noise_;
+  IekfPredictorPdrConfig pdr_config_;
+  std::unique_ptr<ScalarFilter> accel_norm_filter_;
 };
 
 }  // namespace iekf_lio

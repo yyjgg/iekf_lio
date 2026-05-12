@@ -6,3 +6,6 @@ dist/
 log/
 tum_format/
 output/
+pdroutput/
+*.log
+timeoutput/

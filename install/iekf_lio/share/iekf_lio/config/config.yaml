@@ -20,7 +20,7 @@ iekf_slam_node:
     deskew.max_input_points: 8000
     downsample.enable: true
     downsample.leaf_size: 0.4
-    downsample.update_leaf_size: 0.6
+    downsample.update_leaf_size: 0.3
     downsample.map_leaf_size: 0.4
 
     # -----------------------------
@@ -53,7 +53,7 @@ iekf_slam_node:
     updater.max_update_points: 1500 #每次迭代优化中使用的最大点数，控制优化的计算量，过大可能导致优化过慢，过小可能优化效果不好
     updater.convergence_delta_pos_m: 1.0e-3 # 单轮迭代的位置增量小于该阈值时可认为位置已收敛
     updater.convergence_delta_rot_rad: 1.0e-4 # 单轮迭代的姿态李代数增量小于该阈值时可认为姿态已收敛
-    updater.degeneracy_projection.enable: true # 是否开启基于观测信息矩阵特征方向的退化抑制
+    updater.degeneracy_projection.enable: false # 是否开启基于观测信息矩阵特征方向的退化抑制
     updater.degeneracy_projection.trigger_ratio: 0.02 # 只有当最小/最大特征值比小于该阈值时才触发退化抑制
     updater.degeneracy_projection.relative_scale: 0.005 # 退化参考阈值相对最大特征值的比例
     updater.degeneracy_projection.absolute_floor: 1.0e-6 # 退化参考阈值的绝对下限，避免全零信息时数值问题
@@ -64,10 +64,14 @@ iekf_slam_node:
     # -----------------------------
     local_map.voxel_size: 0.4
     local_map.block_size: 20.0
-    local_map.history.max_blocks: 100
+    local_map.history.max_blocks: 200
     local_map.history.enable: true
-    local_map.history.radius_xy: 400.0
+    local_map.history.radius_xy: 200.0
     local_map.history.half_height: 100.0
+    keyframe.enable: true
+    keyframe.translation_thresh_m: 0.5
+    keyframe.rotation_thresh_deg: 10.0
+    keyframe.backend.max_cached: 200
 
     # -----------------------------
     # Publish / Visualization
@@ -83,7 +87,7 @@ iekf_slam_node:
     # -----------------------------
     # Runtime / OpenMP
     # -----------------------------
-    runtime.omp_num_threads: 18
+    runtime.omp_num_threads: 20
     runtime.omp_dynamic: false
     runtime.omp_proc_bind: true
     runtime.omp_places: "cores"
