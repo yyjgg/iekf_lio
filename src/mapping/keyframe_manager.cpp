@@ -11,6 +11,7 @@ void KeyframeManager::setConfig(const KeyframeManagerConfig & config)
   config_ = config;
   config_.translation_thresh_m = std::max(0.0, config_.translation_thresh_m);
   config_.rotation_thresh_rad = std::max(0.0, config_.rotation_thresh_rad);
+  config_.time_thresh_s = std::max(0.0, config_.time_thresh_s);
 }
 
 void KeyframeManager::reset()
@@ -45,11 +46,15 @@ KeyframeDecision KeyframeManager::update(
     return decision;
   }
 
+  decision.delta_time_s = std::max(0.0, time_s - last_time_s_);
   decision.translation_m = (p_wb - last_p_wb_).norm();
   decision.rotation_rad = relativeRotationAngle(last_r_wb_, r_wb);
+  const bool trigger_by_time =
+    (config_.time_thresh_s > 0.0) && (decision.delta_time_s >= config_.time_thresh_s);
   if (
     decision.translation_m >= config_.translation_thresh_m ||
-    decision.rotation_rad >= config_.rotation_thresh_rad)
+    decision.rotation_rad >= config_.rotation_thresh_rad ||
+    trigger_by_time)
   {
     has_last_keyframe_ = true;
     last_time_s_ = time_s;

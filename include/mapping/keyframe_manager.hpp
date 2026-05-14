@@ -12,6 +12,7 @@ struct KeyframeManagerConfig
   bool enable = true;
   double translation_thresh_m = 0.5;
   double rotation_thresh_rad = 10.0 * 3.14159265358979323846 / 180.0;
+  double time_thresh_s = 0.0;
 };
 
 struct KeyframeDecision
@@ -20,6 +21,7 @@ struct KeyframeDecision
   bool is_first_keyframe = false;
   double translation_m = 0.0;
   double rotation_rad = 0.0;
+  double delta_time_s = 0.0;
   std::size_t total_keyframes = 0;
 };
 

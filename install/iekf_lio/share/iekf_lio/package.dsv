@@ -1,6 +1,12 @@
 source;share/iekf_lio/hook/cmake_prefix_path.ps1
 source;share/iekf_lio/hook/cmake_prefix_path.dsv
 source;share/iekf_lio/hook/cmake_prefix_path.sh
+source;share/iekf_lio/hook/ld_library_path_lib.ps1
+source;share/iekf_lio/hook/ld_library_path_lib.dsv
+source;share/iekf_lio/hook/ld_library_path_lib.sh
+source;share/iekf_lio/hook/pythonpath.ps1
+source;share/iekf_lio/hook/pythonpath.dsv
+source;share/iekf_lio/hook/pythonpath.sh
 source;share/iekf_lio/local_setup.bash
 source;share/iekf_lio/local_setup.dsv
 source;share/iekf_lio/local_setup.ps1

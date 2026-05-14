@@ -20,7 +20,7 @@ iekf_slam_node:
     deskew.max_input_points: 8000
     downsample.enable: true
     downsample.leaf_size: 0.4
-    downsample.update_leaf_size: 0.3
+    downsample.update_leaf_size: 0.5
     downsample.map_leaf_size: 0.4
 
     # -----------------------------
@@ -41,6 +41,37 @@ iekf_slam_node:
     predictor_noise.sigma_g_rw: 0.0
 
     # -----------------------------
+    # PDR Preprocess / Peak Detect
+    # -----------------------------
+    pdr.buffer_size: 12000
+    pdr.sample_rate_hz: 100.0
+    pdr.accel_norm_lpf_cutoff_hz: 5.0
+    pdr.output_dir: "/home/yyj/IEKF_LIO_node/src/iekf_lio/pdroutput"
+    pdr.peak.enable: true
+    pdr.peak.buffer_size: 2000
+    pdr.peak.min_height: 0.05
+    pdr.peak.min_interval_s: 0.10
+    pdr.peak.nms_interval_s: 0.35
+    pdr.ampd.enable: true
+    pdr.ampd.smin: 5
+    pdr.ampd.smax: 30
+    pdr.ampd.pass_ratio: 0.5
+    pdr.step.buffer_size: 2000
+    pdr.step.min_interval_s: 0.35
+    pdr.step.max_interval_s: 1.2
+    pdr.step.min_peak_valley_diff: 0.15
+    # ZUPT is temporarily commented out in code while we stabilize the front-end.
+    # zupt.enable: false
+    # zupt.window_s: 0.3
+    # zupt.min_samples: 10
+    # zupt.accel_mean_abs_error_thresh_mps2: 0.15
+    # zupt.accel_var_thresh_mps2: 0.1
+    # zupt.gyro_mean_norm_thresh_rps: 0.05
+    # zupt.gyro_var_thresh_rps2: 0.01
+    # zupt.velocity_sigma_mps: 0.05
+    time.output_dir: "/home/yyj/IEKF_LIO_node/src/iekf_lio/timeoutput"
+
+    # -----------------------------
     # IEKF Updater (scan-to-map)
     # -----------------------------
     updater.enable: true
@@ -54,7 +85,11 @@ iekf_slam_node:
     updater.convergence_delta_pos_m: 1.0e-3 # 单轮迭代的位置增量小于该阈值时可认为位置已收敛
     updater.convergence_delta_rot_rad: 1.0e-4 # 单轮迭代的姿态李代数增量小于该阈值时可认为姿态已收敛
     updater.degeneracy_projection.enable: false # 是否开启基于观测信息矩阵特征方向的退化抑制
-    updater.degeneracy_projection.trigger_ratio: 0.02 # 只有当最小/最大特征值比小于该阈值时才触发退化抑制
+    updater.degeneracy_projection.log_only: true # 只计算和记录退化信息，不把退化投影真正并入状态更新
+    updater.degeneracy_projection.trigger_ratio: 0.02 # 条件1：最小/最大特征值比足够差
+    updater.degeneracy_projection.min_eigenvalue_threshold: 1.0e-3 # 条件2：最小特征值绝对值也足够小
+    updater.degeneracy_projection.poor_match_min_correspondences: 80 # 条件3a：LiDAR有效匹配数量过少则认为匹配质量差
+    updater.degeneracy_projection.poor_match_rmse_threshold: 0.25 # 条件3b：LiDAR匹配RMSE过大则认为匹配质量差
     updater.degeneracy_projection.relative_scale: 0.005 # 退化参考阈值相对最大特征值的比例
     updater.degeneracy_projection.absolute_floor: 1.0e-6 # 退化参考阈值的绝对下限，避免全零信息时数值问题
     updater.degeneracy_projection.min_weight: 0.3 # 退化方向最小保留权重，0表示可完全抑制
@@ -71,14 +106,39 @@ iekf_slam_node:
     keyframe.enable: true
     keyframe.translation_thresh_m: 0.5
     keyframe.rotation_thresh_deg: 10.0
+    keyframe.time_thresh_s: 1.0
     keyframe.backend.max_cached: 200
+    keyframe.backend.max_archive_cached: 1000
+    local_map.active.recent_count: 30
+    local_map.active.radius_m: 30.0 #浮点数和整数在yaml文件中不能混用
+    local_map.active.max_keyframes: 50
+    loop.enable: false
+    loop.min_keyframes_before_loop: 30
+    loop.exclude_recent_keyframes: 30
+    loop.scan_context.num_rings: 20
+    loop.scan_context.num_sectors: 60
+    loop.scan_context.max_radius: 80.0
+    loop.scan_context.max_entries: 1000
+    loop.scan_context.num_candidates: 10
+    loop.scan_context.distance_threshold: 0.15
+    loop.registration.enable: false
+    loop.registration.voxel_leaf_size: 0.5
+    loop.registration.max_corr_distance: 2.0
+    loop.registration.max_iterations: 40
+    loop.registration.fitness_threshold: 0.5
+    loop.factor.translation_sigma: 0.5
+    loop.factor.rotation_sigma_rad: 0.2
+    backend.optimize.enable: false
 
     # -----------------------------
     # Publish / Visualization
     # -----------------------------
     publish.odom_topic: "/iekf/odom"
     publish.path_topic: "/iekf/path"
+    publish.backend_path_topic: "/iekf/backend_path"
     publish.points_world_topic: "/iekf/points_world"
+    publish.imu_prediction_topic: "/iekf/imu_prediction_state"
+    publish.imu_prediction_qos_depth: 256
     publish.map_frame_id: "map"
     publish.base_frame_id: "base_link"
     publish.path.max_length: 2000
@@ -96,4 +156,6 @@ iekf_slam_node:
     # Extrinsic (LiDAR -> IMU)
     # -----------------------------
     extrinsic.lidar_to_imu.R: [-0.0048858, -0.9997687, -0.0209424, 0.9999720, -0.0047662, -0.0057583, 0.0056571, -0.0209700, 0.9997641]
-    extrinsic.lidar_to_imu.P: [0.083, 0.077, 0.035]
+    extrinsic.lidar_to_imu.P: [0.083, 0.077, 0.035] #avia
+    # extrinsic.lidar_to_imu.R: [0.00190016, -0.99992, 0.0124826, 0.99998, 0.00182469, -0.00605486, 0.0060316, 0.0124938, 0.999904]
+    # extrinsic.lidar_to_imu.P: [-0.082, 0.061, 0.025] #mid

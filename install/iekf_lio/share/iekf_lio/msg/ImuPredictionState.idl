@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from iekf_lio/msg/ImuPredictionState.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+
+module iekf_lio {
+  module msg {
+    typedef double double__3[3];
+    struct ImuPredictionState {
+      builtin_interfaces::msg::Time stamp;
+
+      double__3 gyro_mid_unbiased;
+
+      double__3 linear_accel_mid_w;
+
+      double yaw_mid_rad;
+    };
+  };
+};

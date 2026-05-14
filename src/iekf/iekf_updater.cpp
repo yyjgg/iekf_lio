@@ -133,6 +133,8 @@ bool IekfUpdater::updatePoseWithPointToMap(
   const Eigen::Matrix<double, 18, 18> P_inv = prior_ldlt.solve(I18);
 
   for (int iter = 0; iter < max_iters; ++iter) {
+    IekfUpdateResult::IterationLog iter_log;
+    iter_log.iekf_iter = iter + 1;
     const std::size_t sampled_points = (total_points + stride - 1) / stride;
     Eigen::Matrix<double, 18, 18> info_HtRinvH = Eigen::Matrix<double, 18, 18>::Zero();
     Eigen::Matrix<double, 18, 1> info_HtRinvNu = Eigen::Matrix<double, 18, 1>::Zero();
@@ -226,6 +228,9 @@ bool IekfUpdater::updatePoseWithPointToMap(
     }
 
     if (corr == 0) {
+      if (result != nullptr && config_.degeneracy_projection_log_only) {
+        result->iter_logs.push_back(iter_log);
+      }
       if (result != nullptr) {
         result->correspondences = corr;
         result->rmse = 0.0;
@@ -234,13 +239,15 @@ bool IekfUpdater::updatePoseWithPointToMap(
       break;
     }
     const double rmse = std::sqrt(err2_sum / static_cast<double>(corr));
+    iter_log.valid_correspondences = corr;
+    iter_log.residual_rmse = rmse;
     if (result != nullptr) {
       result->correspondences = corr;
       result->rmse = rmse;
       result->iterations = iter + 1;
     }
 
-    if (config_.degeneracy_projection_enable) {
+    if (config_.degeneracy_projection_enable || config_.degeneracy_projection_log_only) {
       Eigen::Matrix<double, kGeomDim, kGeomDim> lambda_g =
         Eigen::Matrix<double, kGeomDim, kGeomDim>::Zero();
       lambda_g.block<3, 3>(0, 0) = info_HtRinvH.block<3, 3>(0, 0);
@@ -261,10 +268,48 @@ bool IekfUpdater::updatePoseWithPointToMap(
           std::max(config_.degeneracy_abs_floor, eigvals.maxCoeff());
         const double lambda_min = std::max(0.0, eigvals.minCoeff());
         const double trigger_ratio = lambda_min / lambda_max;
-        if (trigger_ratio < config_.degeneracy_trigger_ratio) {
-          const double lambda_ref = std::max(
-            config_.degeneracy_abs_floor,
-            config_.degeneracy_relative_scale * lambda_max);
+        const bool ratio_bad = trigger_ratio < config_.degeneracy_trigger_ratio;
+        const bool absolute_small =
+          lambda_min < std::max(0.0, config_.degeneracy_min_eigenvalue_threshold);
+        const bool poor_match =
+          corr < static_cast<std::size_t>(
+          std::max(1, config_.degeneracy_poor_match_min_correspondences)) ||
+          rmse > std::max(0.0, config_.degeneracy_poor_match_rmse_threshold);
+        const double lambda_eps = std::max(config_.degeneracy_abs_floor, 1e-12);
+        const double threshold_ref = std::max(
+          config_.degeneracy_abs_floor,
+          config_.degeneracy_relative_scale * lambda_max);
+
+        if (result != nullptr) {
+          result->lambda_min = lambda_min;
+          result->lambda_max = lambda_max;
+          result->lambda_ratio = trigger_ratio;
+          result->condition_number = lambda_max / std::max(lambda_min, lambda_eps);
+          result->bad_ratio = ratio_bad;
+          result->weak_abs = absolute_small;
+          result->bad_quality = poor_match;
+          result->is_degenerate_raw = ratio_bad && absolute_small && poor_match;
+          result->threshold_ref = threshold_ref;
+          result->weights = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+        }
+        iter_log.lambda_min = lambda_min;
+        iter_log.lambda_max = lambda_max;
+        iter_log.lambda_ratio = trigger_ratio;
+        iter_log.condition_number = lambda_max / std::max(lambda_min, lambda_eps);
+        iter_log.bad_ratio = ratio_bad;
+        iter_log.weak_abs = absolute_small;
+        iter_log.bad_quality = poor_match;
+        iter_log.is_degenerate_raw = ratio_bad && absolute_small && poor_match;
+        iter_log.threshold_ref = threshold_ref;
+
+        // In both "enable" and "log_only" modes we fully run the candidate
+        // degeneracy projection pipeline once the frame is clearly degenerate,
+        // so the logged weights and projected geometry reflect the real
+        // projection behavior. Only the final write-back into the LiDAR
+        // information system is gated by `enable && !log_only`.
+        if (ratio_bad && absolute_small && poor_match)
+        {
+          const double lambda_ref = threshold_ref;
 
           Eigen::Matrix<double, kGeomDim, 1> weights =
             Eigen::Matrix<double, kGeomDim, 1>::Ones();
@@ -272,6 +317,15 @@ bool IekfUpdater::updatePoseWithPointToMap(
             const double lambda_k = std::max(0.0, eigvals(k));
             const double w = lambda_k / (lambda_k + lambda_ref);
             weights(k) = std::clamp(w, config_.degeneracy_min_weight, 1.0);
+          }
+
+          if (result != nullptr) {
+            for (int k = 0; k < kGeomDim; ++k) {
+              result->weights[static_cast<std::size_t>(k)] = weights(k);
+            }
+          }
+          for (int k = 0; k < kGeomDim; ++k) {
+            iter_log.weights[static_cast<std::size_t>(k)] = weights(k);
           }
 
           const Eigen::Matrix<double, kGeomDim, kGeomDim> W = weights.asDiagonal();
@@ -282,12 +336,17 @@ bool IekfUpdater::updatePoseWithPointToMap(
             D * lambda_g * D.transpose();
           const Eigen::Matrix<double, kGeomDim, 1> eta_g_deg = D * eta_g;
 
-          info_HtRinvH.block<3, 3>(0, 0) = lambda_g_deg.block<3, 3>(0, 0);
-          info_HtRinvH.block<3, 3>(0, 6) = lambda_g_deg.block<3, 3>(0, 3);
-          info_HtRinvH.block<3, 3>(6, 0) = lambda_g_deg.block<3, 3>(3, 0);
-          info_HtRinvH.block<3, 3>(6, 6) = lambda_g_deg.block<3, 3>(3, 3);
-          info_HtRinvNu.segment<3>(0) = eta_g_deg.segment<3>(0);
-          info_HtRinvNu.segment<3>(6) = eta_g_deg.segment<3>(3);
+          if (
+            config_.degeneracy_projection_enable &&
+            !config_.degeneracy_projection_log_only)
+          {
+            info_HtRinvH.block<3, 3>(0, 0) = lambda_g_deg.block<3, 3>(0, 0);
+            info_HtRinvH.block<3, 3>(0, 6) = lambda_g_deg.block<3, 3>(0, 3);
+            info_HtRinvH.block<3, 3>(6, 0) = lambda_g_deg.block<3, 3>(3, 0);
+            info_HtRinvH.block<3, 3>(6, 6) = lambda_g_deg.block<3, 3>(3, 3);
+            info_HtRinvNu.segment<3>(0) = eta_g_deg.segment<3>(0);
+            info_HtRinvNu.segment<3>(6) = eta_g_deg.segment<3>(3);
+          }
         }
       }
     }
@@ -319,6 +378,13 @@ bool IekfUpdater::updatePoseWithPointToMap(
 
     if (result != nullptr) {
       result->updated = true;
+      result->update_dx_pos_norm = delta_pos_norm;
+      result->update_dx_rot_norm = delta_rot_norm;
+    }
+    iter_log.update_dx_pos_norm = delta_pos_norm;
+    iter_log.update_dx_rot_norm = delta_rot_norm;
+    if (result != nullptr && config_.degeneracy_projection_log_only) {
+      result->iter_logs.push_back(iter_log);
     }
 
     if (converged) {

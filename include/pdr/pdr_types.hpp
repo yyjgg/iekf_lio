@@ -44,7 +44,7 @@ struct PdrStepEvent
   double min_value = 0.0;
   double gyro_norm_mean_rps = 0.0;
   double peak_valley_diff = 0.0;
-  double step_length_m = 0.0;
+  double peak_valley_diff_nonlinear = 0.0;
   double yaw_avg_rad = 0.0;
   Eigen::Vector3d delta_p_w = Eigen::Vector3d::Zero();
 };

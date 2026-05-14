@@ -17,6 +17,7 @@
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <Eigen/Geometry>
@@ -106,8 +107,8 @@ public:
       "pdr.step.max_interval_s", 1.0);
     pdr_step_min_peak_valley_diff_ = this->declare_parameter<double>(
       "pdr.step.min_peak_valley_diff", 0.15);
-    pdr_step_weinberg_k_ = this->declare_parameter<double>(
-      "pdr.step.weinberg_k", 0.4);
+    // ZUPT is temporarily disabled in code while we stabilize the front-end path.
+    // Keep the config block for future tuning, but do not bind it into runtime logic.
     updater_enable_ = this->declare_parameter<bool>("updater.enable", true);
     updater_max_iterations_ = this->declare_parameter<int>("updater.max_iterations", 2);
     updater_max_corr_dist_ = this->declare_parameter<double>("updater.max_correspondence_distance", 1.0);
@@ -122,8 +123,16 @@ public:
       "updater.convergence_delta_rot_rad", 1e-4);
     updater_degeneracy_enable_ = this->declare_parameter<bool>(
       "updater.degeneracy_projection.enable", true);
+    updater_degeneracy_log_only_ = this->declare_parameter<bool>(
+      "updater.degeneracy_projection.log_only", false);
     updater_degeneracy_trigger_ratio_ = this->declare_parameter<double>(
       "updater.degeneracy_projection.trigger_ratio", 0.02);
+    updater_degeneracy_min_eigenvalue_threshold_ = this->declare_parameter<double>(
+      "updater.degeneracy_projection.min_eigenvalue_threshold", 1e-3);
+    updater_degeneracy_poor_match_min_correspondences_ = this->declare_parameter<int>(
+      "updater.degeneracy_projection.poor_match_min_correspondences", 80);
+    updater_degeneracy_poor_match_rmse_threshold_ = this->declare_parameter<double>(
+      "updater.degeneracy_projection.poor_match_rmse_threshold", 0.25);
     updater_degeneracy_relative_scale_ = this->declare_parameter<double>(
       "updater.degeneracy_projection.relative_scale", 0.05);
     updater_degeneracy_abs_floor_ = this->declare_parameter<double>(
@@ -150,10 +159,18 @@ public:
       "keyframe.translation_thresh_m", 0.5);
     keyframe_rotation_thresh_deg_ = this->declare_parameter<double>(
       "keyframe.rotation_thresh_deg", 10.0);
+    keyframe_time_thresh_s_ = this->declare_parameter<double>(
+      "keyframe.time_thresh_s", 0.0);
     keyframe_backend_max_cached_ = this->declare_parameter<int>(
       "keyframe.backend.max_cached", 200);
     keyframe_backend_max_archive_cached_ = this->declare_parameter<int>(
       "keyframe.backend.max_archive_cached", 2000);
+    local_map_active_recent_count_ = this->declare_parameter<int>(
+      "local_map.active.recent_count", 30);
+    local_map_active_radius_m_ = this->declare_parameter<double>(
+      "local_map.active.radius_m", 30.0);
+    local_map_active_max_keyframes_ = this->declare_parameter<int>(
+      "local_map.active.max_keyframes", 30);
     loop_enable_ = this->declare_parameter<bool>("loop.enable", true);
     loop_min_keyframes_before_loop_ = this->declare_parameter<int>(
       "loop.min_keyframes_before_loop", 30);
@@ -255,7 +272,14 @@ public:
     updater_cfg.convergence_delta_pos_m = std::max(0.0, updater_convergence_delta_pos_m_);
     updater_cfg.convergence_delta_rot_rad = std::max(0.0, updater_convergence_delta_rot_rad_);
     updater_cfg.degeneracy_projection_enable = updater_degeneracy_enable_;
+    updater_cfg.degeneracy_projection_log_only = updater_degeneracy_log_only_;
     updater_cfg.degeneracy_trigger_ratio = std::max(0.0, updater_degeneracy_trigger_ratio_);
+    updater_cfg.degeneracy_min_eigenvalue_threshold = std::max(
+      0.0, updater_degeneracy_min_eigenvalue_threshold_);
+    updater_cfg.degeneracy_poor_match_min_correspondences = std::max(
+      1, updater_degeneracy_poor_match_min_correspondences_);
+    updater_cfg.degeneracy_poor_match_rmse_threshold = std::max(
+      0.0, updater_degeneracy_poor_match_rmse_threshold_);
     updater_cfg.degeneracy_relative_scale = std::max(1e-6, updater_degeneracy_relative_scale_);
     updater_cfg.degeneracy_abs_floor = std::max(1e-12, updater_degeneracy_abs_floor_);
     updater_cfg.degeneracy_min_weight = std::clamp(updater_degeneracy_min_weight_, 0.0, 1.0);
@@ -269,6 +293,7 @@ public:
     keyframe_cfg.enable = keyframe_enable_;
     keyframe_cfg.translation_thresh_m = std::max(0.0, keyframe_translation_thresh_m_);
     keyframe_cfg.rotation_thresh_rad = std::max(0.0, keyframe_rotation_thresh_deg_) * M_PI / 180.0;
+    keyframe_cfg.time_thresh_s = std::max(0.0, keyframe_time_thresh_s_);
     keyframe_manager_.setConfig(keyframe_cfg);
     iekf_lio::ScanContextManagerConfig scan_context_cfg;
     scan_context_cfg.enable = loop_enable_;
@@ -422,6 +447,196 @@ public:
       std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
   };
 
+  KeyframeData makeKeyframeData(
+    std::size_t id,
+    double time_s,
+    const Eigen::Vector3d & p_wb,
+    const Eigen::Matrix3d & r_wb,
+    const iekf_lio::LidarScanXYZ & scan_for_map) const
+  {
+    KeyframeData keyframe;
+    keyframe.id = id;
+    keyframe.time_s = time_s;
+    keyframe.p_wb = p_wb;
+    keyframe.r_wb = r_wb;
+    if (scan_for_map.points != nullptr) {
+      keyframe.cloud_i = scan_for_map.points;
+    }
+    return keyframe;
+  }
+
+  void appendActiveKeyframe(const KeyframeData & keyframe)
+  {
+    frontend_keyframe_history_.push_back(keyframe);
+  }
+
+  void cacheKeyframeVoxelContributions(const KeyframeData & keyframe)
+  {
+    if (keyframe_voxel_cache_.find(keyframe.id) != keyframe_voxel_cache_.end()) {
+      return;
+    }
+
+    if (keyframe.cloud_i == nullptr || keyframe.cloud_i->empty()) {
+      keyframe_voxel_cache_.emplace(
+        keyframe.id, std::vector<iekf_lio::VoxelMap::VoxelContribution> {});
+      return;
+    }
+
+    keyframe_voxel_cache_[keyframe.id] = voxel_map_.buildTransformedScanContributions(
+      *keyframe.cloud_i, keyframe.r_wb, keyframe.p_wb);
+  }
+
+  std::deque<KeyframeData> selectActiveKeyframes(
+    const Eigen::Vector3d & center_w) const
+  {
+    std::deque<KeyframeData> selected;
+    if (frontend_keyframe_history_.empty()) {
+      return selected;
+    }
+
+    const std::size_t max_active =
+      static_cast<std::size_t>(std::max(1, local_map_active_max_keyframes_));
+    const std::size_t recent_count =
+      static_cast<std::size_t>(std::max(0, local_map_active_recent_count_));
+    const double radius_m = std::max(0.0, local_map_active_radius_m_);
+    const double radius2 = radius_m * radius_m;
+
+    std::unordered_set<std::size_t> selected_ids;
+    selected_ids.reserve(max_active * 2);
+
+    const std::size_t take_recent = std::min(recent_count, frontend_keyframe_history_.size());
+    const auto recent_begin =
+      frontend_keyframe_history_.end() - static_cast<std::ptrdiff_t>(take_recent);
+    for (auto it = recent_begin; it != frontend_keyframe_history_.end(); ++it) {
+      if (selected.size() >= max_active) {
+        return selected;
+      }
+      selected.push_back(*it);
+      selected_ids.insert(it->id);
+    }
+
+    struct SpatialCandidate
+    {
+      double dist2 = 0.0;
+      const KeyframeData * keyframe = nullptr;
+    };
+
+    std::vector<SpatialCandidate> spatial_candidates;
+    spatial_candidates.reserve(frontend_keyframe_history_.size());
+    for (const auto & keyframe : frontend_keyframe_history_) {
+      if (selected_ids.count(keyframe.id) != 0U) {
+        continue;
+      }
+      const double dist2 = (keyframe.p_wb - center_w).squaredNorm();
+      if (dist2 <= radius2) {
+        spatial_candidates.push_back(SpatialCandidate {dist2, &keyframe});
+      }
+    }
+
+    std::sort(
+      spatial_candidates.begin(),
+      spatial_candidates.end(),
+      [](const SpatialCandidate & a, const SpatialCandidate & b) {
+        if (a.dist2 != b.dist2) {
+          return a.dist2 < b.dist2;
+        }
+        return a.keyframe->time_s < b.keyframe->time_s;
+      });
+
+    for (const auto & candidate : spatial_candidates) {
+      if (selected.size() >= max_active) {
+        break;
+      }
+      selected.push_back(*candidate.keyframe);
+      selected_ids.insert(candidate.keyframe->id);
+    }
+
+    return selected;
+  }
+
+  bool refreshActiveKeyframes(const Eigen::Vector3d & center_w)
+  {
+    const std::deque<KeyframeData> selected = selectActiveKeyframes(center_w);
+    if (selected.size() != local_map_active_keyframes_.size()) {
+      local_map_active_keyframes_ = selected;
+      return true;
+    }
+
+    for (std::size_t i = 0; i < selected.size(); ++i) {
+      if (selected[i].id != local_map_active_keyframes_[i].id) {
+        local_map_active_keyframes_ = selected;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void updateLocalMapByActiveKeyframeDiff(const Eigen::Vector3d & center_w)
+  {
+    const std::deque<KeyframeData> selected = selectActiveKeyframes(center_w);
+    if (selected.empty()) {
+      voxel_map_.clear();
+      local_map_active_keyframes_.clear();
+      local_map_active_keyframe_ids_.clear();
+      local_map_initialized_ = false;
+      return;
+    }
+
+    std::unordered_set<std::size_t> new_active_ids;
+    new_active_ids.reserve(selected.size() * 2);
+    for (const auto & keyframe : selected) {
+      new_active_ids.insert(keyframe.id);
+    }
+
+    for (const auto & active_id : local_map_active_keyframe_ids_) {
+      if (new_active_ids.count(active_id) != 0U) {
+        continue;
+      }
+      const auto cache_it = keyframe_voxel_cache_.find(active_id);
+      if (cache_it != keyframe_voxel_cache_.end()) {
+        voxel_map_.removeVoxelContributions(cache_it->second);
+      }
+    }
+
+    for (const auto & keyframe : selected) {
+      if (local_map_active_keyframe_ids_.count(keyframe.id) != 0U) {
+        continue;
+      }
+      cacheKeyframeVoxelContributions(keyframe);
+      const auto cache_it = keyframe_voxel_cache_.find(keyframe.id);
+      if (cache_it != keyframe_voxel_cache_.end()) {
+        voxel_map_.addVoxelContributions(cache_it->second);
+      }
+    }
+
+    local_map_active_keyframes_ = selected;
+    local_map_active_keyframe_ids_ = std::move(new_active_ids);
+    local_map_initialized_ = voxel_map_.size() > 0;
+  }
+
+#if 0
+  // ZUPT implementation is temporarily commented out while we stabilize the
+  // front-end estimation chain. Keep this block for future re-enable/debug.
+  struct ZuptDetectionResult
+  {
+    bool is_static = false;
+    std::size_t sample_count = 0;
+    double accel_mean_abs_error_mps2 = 0.0;
+    double accel_var_mps2 = 0.0;
+    double gyro_mean_norm_rps = 0.0;
+    double gyro_var_rps2 = 0.0;
+  };
+
+  Eigen::Matrix3d skewMatrix(const Eigen::Vector3d & w) const;
+  Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta) const;
+  iekf_lio::ImuTrack collectRecentImuTrack(
+    const builtin_interfaces::msg::Time & end_time,
+    double window_s);
+  ZuptDetectionResult detectStationaryFromImuWindow(
+    const iekf_lio::ImuTrack & imu_track) const;
+  bool applyZuptVelocityUpdate(double velocity_sigma_mps);
+#endif
+
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
   {
     {
@@ -511,22 +726,8 @@ public:
     }
   }
 
-  void enqueueKeyframe(
-    std::size_t id,
-    double time_s,
-    const Eigen::Vector3d & p_wb,
-    const Eigen::Matrix3d & r_wb,
-    const iekf_lio::LidarScanXYZ & scan_for_map)
+  void enqueueKeyframe(KeyframeData keyframe)
   {
-    KeyframeData keyframe;
-    keyframe.id = id;
-    keyframe.time_s = time_s;
-    keyframe.p_wb = p_wb;
-    keyframe.r_wb = r_wb;
-    if (scan_for_map.points != nullptr) {
-      keyframe.cloud_i = scan_for_map.points;
-    }
-
     {
       std::lock_guard<std::mutex> lk(keyframe_mutex_);
       keyframe_queue_.push_back(std::move(keyframe));
@@ -923,6 +1124,13 @@ public:
       pdr_step_event_buffer_.clear();
       last_pdr_downsample_time_s_ = -1.0;
       next_pdr_sample_id_ = 0;
+      keyframe_manager_.reset();
+      frontend_keyframe_history_.clear();
+      local_map_active_keyframes_.clear();
+      local_map_active_keyframe_ids_.clear();
+      keyframe_voxel_cache_.clear();
+      voxel_map_.clear();
+      local_map_initialized_ = false;
       iekf_state_.x.r_wb = imu_init_result.initial_r_wb;
       iekf_state_.x.b_g = imu_init_result.gyro_bias;
       iekf_state_.x.b_a = imu_init_result.accel_bias;
@@ -982,59 +1190,25 @@ public:
     downsample_ns = static_cast<std::uint64_t>(
       std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - downsample_t0).count());
 
-    std::size_t world_point_count = 0;
-    std::size_t map_inserted = 0;
-    std::size_t map_pruned = 0;
-    std::size_t history_blocks = 0;
-    std::size_t update_corr = 0;
-    double update_rmse = 0.0;
+    std::size_t map_voxels = 0;
     std::uint64_t update_search_ns = 0;
     std::uint64_t update_plane_ns = 0;
     std::uint64_t update_accumulate_ns = 0;
     std::uint64_t update_solve_ns = 0;
     bool used_update = false;
     std::string update_skip_reason = "none";
-
+    iekf_lio::IekfUpdateResult upd;
     if (!local_map_initialized_) {
-      // First valid scan: explicitly skip IEKF update, use current predicted state to bootstrap map.
-      const auto map_insert_t0 = SteadyClock::now();
-      if (scan_for_map.points != nullptr) {
-        const auto insert_result = voxel_map_.insertTransformedScan(
-          *scan_for_map.points, iekf_state_.x.r_wb, iekf_state_.x.p_wb);
-        world_point_count = insert_result.valid_points;
-        map_inserted = insert_result.inserted_voxels;
-      }
-      map_insert_ns = static_cast<std::uint64_t>(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - map_insert_t0).count());
-      map_ns = map_insert_ns;
-      local_map_initialized_ = true;
-      const auto history_prune_t0 = SteadyClock::now();
-      map_pruned = voxel_map_.pruneHistoryBlocks(iekf_state_.x.p_wb);
-      map_prune_ns = static_cast<std::uint64_t>(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - history_prune_t0).count());
-      map_ns += map_prune_ns;
-      history_blocks = voxel_map_.blockCount();
-      RCLCPP_INFO(
-        this->get_logger(),
-        "Local map initialized from first valid scan (skip IEKF update): world_points=%zu inserted=%zu pruned=%zu map_voxels=%zu history_blocks=%zu",
-        world_point_count,
-        map_inserted,
-        map_pruned,
-        voxel_map_.size(),
-        history_blocks);
+      update_skip_reason = "local_map_not_initialized";
     } else {
-      // Update branch: run IEKF updater on active blocks,
-      // then insert points with posterior state.
+      // Update branch: run IEKF updater on active-keyframe local map only.
       if (updater_enable_) {
         const auto update_t0 = SteadyClock::now();
-        iekf_lio::IekfUpdateResult upd;
         used_update = iekf_updater_.updatePoseWithPointToMap(
           scan_for_update,
           voxel_map_,
           iekf_state_,
           &upd);
-        update_corr = upd.correspondences;
-        update_rmse = upd.rmse;
         update_search_ns = upd.radius_search_ns;
         update_plane_ns = upd.plane_fit_ns;
         update_accumulate_ns = upd.accumulate_ns;
@@ -1047,86 +1221,102 @@ public:
       } else {
         update_skip_reason = "update_disabled";
       }
-
-      const auto map_insert_t0 = SteadyClock::now();
-      if (scan_for_map.points != nullptr) {
-        const auto insert_result = voxel_map_.insertTransformedScan(
-          *scan_for_map.points, iekf_state_.x.r_wb, iekf_state_.x.p_wb);
-        world_point_count = insert_result.valid_points;
-        map_inserted = insert_result.inserted_voxels;
-      }
-      map_insert_ns = static_cast<std::uint64_t>(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - map_insert_t0).count());
-      map_ns += map_insert_ns;
-      const auto history_prune_t0 = SteadyClock::now();
-      map_pruned = voxel_map_.pruneHistoryBlocks(iekf_state_.x.p_wb);
-      map_prune_ns = static_cast<std::uint64_t>(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - history_prune_t0).count());
-      map_ns += map_prune_ns;
-      history_blocks = voxel_map_.blockCount();
-      RCLCPP_DEBUG(
-        this->get_logger(),
-        "Local map integrated one scan: used_update=%s skip=%s corr=%zu rmse=%.4f pruned=%zu world_points=%zu inserted=%zu map_voxels=%zu history_blocks=%zu",
-        used_update ? "true" : "false",
-        update_skip_reason.c_str(),
-        update_corr,
-        update_rmse,
-        map_pruned,
-        world_point_count,
-        map_inserted,
-        voxel_map_.size(),
-        history_blocks);
     }
 
-    last_history_blocks_.store(history_blocks);
+    const iekf_lio::KeyframeDecision keyframe_decision = keyframe_manager_.update(
+      stampToSec(scan_end_time), iekf_state_.x.p_wb, iekf_state_.x.r_wb);
+    if (keyframe_decision.is_keyframe) {
+      const KeyframeData keyframe = makeKeyframeData(
+        keyframe_decision.total_keyframes,
+        stampToSec(scan_end_time),
+        iekf_state_.x.p_wb,
+        iekf_state_.x.r_wb,
+        scan_for_map);
+      cacheKeyframeVoxelContributions(keyframe);
+      appendActiveKeyframe(keyframe);
+      enqueueKeyframe(keyframe);
+    }
 
-    // RCLCPP_INFO(
-    //   this->get_logger(),
-    //   "Scheduled one scan: [%.3f, %.3f], imu_in_window=%zu, points=%zu->%zu, deskew_enable=%s, downsample(update=%zu map=%zu), used_update=%s, update_skip=%s, update_corr=%zu, update_rmse=%.4f, map_pruned=%zu, world_points=%zu, map_voxels=%zu, map_ms(tf=%.2f insert=%.2f prune=%.2f total=%.2f), pred_p=(%.3f,%.3f,%.3f), pred_v=(%.3f,%.3f,%.3f), pred_rpy_rad=(%.3f,%.3f,%.3f)",
-    //   stampToSec(scan_begin_time),
-    //   stampToSec(scan_end_time),
-    //   imu_track_internal.size(),
-    //   raw_point_count,
-    //   filtered_point_count,
-    //   deskew_enable_ ? "true" : "false",
-    //   scan_for_update.points == nullptr ? 0U : scan_for_update.points->size(),
-    //   scan_for_map.points == nullptr ? 0U : scan_for_map.points->size(),
-    //   used_update ? "true" : "false",
-    //   update_skip_reason.c_str(),
-    //   update_corr,
-    //   update_rmse,
-    //   map_pruned,
-    //   world_point_count,
-    //   voxel_map_.size(),
-    //   static_cast<double>(map_transform_ns) * 1e-6,
-    //   static_cast<double>(map_insert_ns) * 1e-6,
-    //   static_cast<double>(map_prune_ns) * 1e-6,
-    //   static_cast<double>(map_ns) * 1e-6,
-    //   iekf_state_.x.p_wb.x(),
-    //   iekf_state_.x.p_wb.y(),
-    //   iekf_state_.x.p_wb.z(),
-    //   iekf_state_.x.v_wb.x(),
-    //   iekf_state_.x.v_wb.y(),
-    //   iekf_state_.x.v_wb.z(),
-    //   rotationMatrixToRpy(iekf_state_.x.r_wb)[0],
-    //   rotationMatrixToRpy(iekf_state_.x.r_wb)[1],
-    //   rotationMatrixToRpy(iekf_state_.x.r_wb)[2]);
+    if (keyframe_decision.is_keyframe) {
+      const auto map_insert_t0 = SteadyClock::now();
+      updateLocalMapByActiveKeyframeDiff(iekf_state_.x.p_wb);
+      map_insert_ns = static_cast<std::uint64_t>(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - map_insert_t0).count());
+    } else {
+      map_insert_ns = 0;
+    }
+    map_ns = map_insert_ns;
+
+    map_voxels = voxel_map_.size();
+
+    last_history_blocks_.store(map_voxels);
+
+    if (updater_degeneracy_log_only_ && degeneracy_iter_log_ofs_.is_open()) {
+      for (const auto & iter_log : upd.iter_logs) {
+        degeneracy_iter_log_ofs_
+          << std::fixed << std::setprecision(9)
+          << stampToSec(scan_end_time) << ","
+          << iter_log.iekf_iter << ","
+          << iter_log.valid_correspondences << ","
+          << std::setprecision(6)
+          << iter_log.residual_rmse << ","
+          << iter_log.lambda_min << ","
+          << iter_log.lambda_max << ","
+          << iter_log.lambda_ratio << ","
+          << iter_log.condition_number << ","
+          << (iter_log.bad_ratio ? 1 : 0) << ","
+          << (iter_log.weak_abs ? 1 : 0) << ","
+          << (iter_log.bad_quality ? 1 : 0) << ","
+          << (iter_log.is_degenerate_raw ? 1 : 0) << ","
+          << iter_log.threshold_ref << ","
+          << iter_log.weights[0] << ","
+          << iter_log.weights[1] << ","
+          << iter_log.weights[2] << ","
+          << iter_log.weights[3] << ","
+          << iter_log.weights[4] << ","
+          << iter_log.weights[5] << ","
+          << iter_log.update_dx_rot_norm << ","
+          << iter_log.update_dx_pos_norm << "\n";
+      }
+    }
+
+    RCLCPP_INFO(
+      this->get_logger(),
+      "Scheduled one scan: [%.3f, %.3f], imu_in_window=%zu, points=%zu->%zu, deskew_enable=%s, downsample(update=%zu map=%zu), used_update=%s, update_skip=%s, local_map_voxels=%zu selected_map_voxels=%zu active_keyframes=%zu keyframe=%s dt=%.3f trans=%.3f rot_deg=%.2f map_ms(rebuild=%.2f total=%.2f), pred_p=(%.3f,%.3f,%.3f), pred_v=(%.3f,%.3f,%.3f), pred_rpy_rad=(%.3f,%.3f,%.3f)",
+      stampToSec(scan_begin_time),
+      stampToSec(scan_end_time),
+      imu_track_internal.size(),
+      raw_point_count,
+      filtered_point_count,
+      deskew_enable_ ? "true" : "false",
+      scan_for_update.points == nullptr ? 0U : scan_for_update.points->size(),
+      scan_for_map.points == nullptr ? 0U : scan_for_map.points->size(),
+      used_update ? "true" : "false",
+      update_skip_reason.c_str(),
+      voxel_map_.size(),
+      map_voxels,
+      local_map_active_keyframes_.size(),
+      keyframe_decision.is_keyframe ? "true" : "false",
+      keyframe_decision.delta_time_s,
+      keyframe_decision.translation_m,
+      keyframe_decision.rotation_rad * 180.0 / M_PI,
+      static_cast<double>(map_insert_ns) * 1e-6,
+      static_cast<double>(map_ns) * 1e-6,
+      iekf_state_.x.p_wb.x(),
+      iekf_state_.x.p_wb.y(),
+      iekf_state_.x.p_wb.z(),
+      iekf_state_.x.v_wb.x(),
+      iekf_state_.x.v_wb.y(),
+      iekf_state_.x.v_wb.z(),
+      rotationMatrixToRpy(iekf_state_.x.r_wb)[0],
+      rotationMatrixToRpy(iekf_state_.x.r_wb)[1],
+      rotationMatrixToRpy(iekf_state_.x.r_wb)[2]);
     const auto publish_t0 = SteadyClock::now();
     publishScanState(scan_end_time);
     if (shouldPublishPointsWorld()) {
       const std::vector<Eigen::Vector3d> points_world =
         transformDeskewedScanToWorld(scan_for_map, iekf_state_.x);
       publishPointsWorld(points_world, scan_end_time);
-    }
-    const iekf_lio::KeyframeDecision keyframe_decision = keyframe_manager_.update(
-      stampToSec(scan_end_time), iekf_state_.x.p_wb, iekf_state_.x.r_wb);
-    if (keyframe_decision.is_keyframe) {
-      enqueueKeyframe(
-        keyframe_decision.total_keyframes,
-        stampToSec(scan_end_time),
-        iekf_state_.x.p_wb,
-        iekf_state_.x.r_wb,
-        scan_for_map);
     }
     writeTumPose(scan_end_time);
     const std::uint64_t publish_ns = static_cast<std::uint64_t>(
@@ -1159,7 +1349,7 @@ public:
         << static_cast<double>(map_prune_ns) * 1e-6 << " "
         << static_cast<double>(publish_ns) * 1e-6 << " "
         << static_cast<double>(total_ns) * 1e-6 << " "
-        << history_blocks << " "
+        << map_voxels << " "
         << (keyframe_decision.is_keyframe ? 1 : 0) << " "
         << keyframe_decision.total_keyframes << "\n";
     }
@@ -1462,7 +1652,7 @@ public:
     if (peak_valley_diff < pdr_step_min_peak_valley_diff_) {
       return;
     }
-    const double step_length_m = pdr_step_weinberg_k_ * std::pow(peak_valley_diff, 0.25);
+    const double peak_valley_diff_nonlinear = std::pow(peak_valley_diff, 0.25);
 
     iekf_lio::PdrStepEvent event;
     event.start_time_s = candidate.start_time_s;
@@ -1472,7 +1662,7 @@ public:
     event.min_value = min_value;
     event.gyro_norm_mean_rps = gyro_norm_mean_rps;
     event.peak_valley_diff = peak_valley_diff;
-    event.step_length_m = step_length_m;
+    event.peak_valley_diff_nonlinear = peak_valley_diff_nonlinear;
     pdr_step_event_buffer_.push_back(event);
     trimBuffer(
       pdr_step_event_buffer_,
@@ -1488,16 +1678,16 @@ public:
         << event.min_value << " "
         << event.gyro_norm_mean_rps << " "
         << event.peak_valley_diff << " "
-        << event.step_length_m << "\n";
+        << event.peak_valley_diff_nonlinear << "\n";
     }
 
     RCLCPP_INFO(
       this->get_logger(),
-      "PDR step event: t0=%.3f t1=%.3f diff=%.6f len=%.4f gyro_mean=%.4f total_events=%zu",
+      "PDR step event: t0=%.3f t1=%.3f diff=%.6f nonlinear=%.4f gyro_mean=%.4f total_events=%zu",
       event.start_time_s,
       event.end_time_s,
       event.peak_valley_diff,
-      event.step_length_m,
+      event.peak_valley_diff_nonlinear,
       event.gyro_norm_mean_rps,
       pdr_step_event_buffer_.size());
   }
@@ -1676,7 +1866,7 @@ public:
       pdr_step_candidate_ofs_ <<
         "# start_time_s end_time_s duration_s start_peak_value end_peak_value\n";
       pdr_step_event_ofs_ <<
-        "# start_time_s end_time_s duration_s max_value min_value gyro_norm_mean_rps peak_valley_diff step_length_m\n";
+        "# start_time_s end_time_s duration_s max_value min_value gyro_norm_mean_rps peak_valley_diff peak_valley_diff_nonlinear\n";
       RCLCPP_INFO(
         this->get_logger(),
         "PDR outputs(run=%s): signal=%s coarse_peaks=%s final_peaks=%s steps=%s step_events=%s",
@@ -1711,6 +1901,8 @@ public:
       time_run_tag_ = run_tag_ss.str();
       const std::filesystem::path scan_path =
         output_dir / ("scan_timing_" + time_run_tag_ + ".txt");
+      const std::filesystem::path degeneracy_iter_csv_path =
+        output_dir / ("degeneracy_iter_log_" + time_run_tag_ + ".csv");
       time_scan_ofs_.open(scan_path, std::ios::out | std::ios::trunc);
       if (!time_scan_ofs_.is_open()) {
         RCLCPP_WARN(
@@ -1719,16 +1911,37 @@ public:
           output_dir.string().c_str());
         return;
       }
+      if (updater_degeneracy_log_only_) {
+        degeneracy_iter_log_ofs_.open(
+          degeneracy_iter_csv_path, std::ios::out | std::ios::trunc);
+        if (!degeneracy_iter_log_ofs_.is_open()) {
+          RCLCPP_WARN(
+            this->get_logger(),
+            "Degeneracy iteration log file failed to open under %s",
+            output_dir.string().c_str());
+          return;
+        }
+      }
       time_scan_ofs_ <<
         "# scan_end_time_s prep_ms predict_ms predict_prop_ms predict_cov_ms predict_record_ms "
         "deskew_ms deskew_end_interp_ms deskew_point_interp_ms deskew_point_tf_ms deskew_merge_ms "
         "downsample_ms update_ms update_search_ms update_plane_ms update_accumulate_ms update_solve_ms "
-        "map_insert_ms map_prune_ms publish_ms total_ms history_blocks is_keyframe total_keyframes\n";
+        "map_insert_ms map_prune_ms publish_ms total_ms local_map_voxels is_keyframe total_keyframes\n";
+      if (updater_degeneracy_log_only_) {
+        degeneracy_iter_log_ofs_ <<
+          "scan_timestamp,iekf_iter,valid_correspondences,residual_rmse,"
+          "lambda_min,lambda_max,lambda_ratio,condition_number,"
+          "bad_ratio,weak_abs,bad_quality,is_degenerate_raw,"
+          "threshold_ref,weight_0,weight_1,weight_2,weight_3,weight_4,weight_5,"
+          "update_dx_rot_norm,update_dx_pos_norm\n";
+      }
       RCLCPP_INFO(
         this->get_logger(),
-        "Timing outputs(run=%s): scan=%s",
+        "Timing outputs(run=%s): scan=%s%s%s",
         time_run_tag_.c_str(),
-        scan_path.string().c_str());
+        scan_path.string().c_str(),
+        updater_degeneracy_log_only_ ? " degeneracy_iter=" : "",
+        updater_degeneracy_log_only_ ? degeneracy_iter_csv_path.string().c_str() : "");
     } catch (const std::exception & e) {
       RCLCPP_WARN(
         this->get_logger(),
@@ -2109,7 +2322,7 @@ public:
       timing_map_prune_ns - last_report_timing_map_prune_ns_;
     const std::uint64_t delta_publish_ns = timing_publish_ns - last_report_timing_publish_ns_;
     const std::uint64_t delta_total_ns = timing_total_ns - last_report_timing_total_ns_;
-    const std::size_t history_blocks = last_history_blocks_.load();
+    const std::size_t local_map_voxels = last_history_blocks_.load();
     const double overflow_drop_rate_window = (delta_rx > 0)
       ? (100.0 * static_cast<double>(delta_drop_overflow) / static_cast<double>(delta_rx))
       : 0.0;
@@ -2152,12 +2365,12 @@ public:
 
     RCLCPP_INFO(
       this->get_logger(),
-      "input buffers: imu=%zu lidar=%zu latest_imu=%.3f latest_lidar=%.3f | map: history_blocks=%zu | lidar_rx=%llu proc=%llu drop_overflow=%llu(win=%.2f%% total=%.2f%%) drop_stale=%llu drop_reflectivity=%llu | stage_ms_per_scan(win): prep=%.2f predict=%.2f deskew=%.2f downsample=%.2f update=%.2f map_tf=%.2f map_insert=%.2f map_prune=%.2f map=%.2f publish=%.2f total=%.2f",
+      "input buffers: imu=%zu lidar=%zu latest_imu=%.3f latest_lidar=%.3f | map: local_map_voxels=%zu | lidar_rx=%llu proc=%llu drop_overflow=%llu(win=%.2f%% total=%.2f%%) drop_stale=%llu drop_reflectivity=%llu | stage_ms_per_scan(win): prep=%.2f predict=%.2f deskew=%.2f downsample=%.2f update=%.2f map_tf=%.2f map_insert=%.2f map_prune=%.2f map=%.2f publish=%.2f total=%.2f",
       imu_size,
       lidar_size,
       stampToSec(latest_imu_stamp_),
       stampToSec(latest_lidar_stamp_),
-      history_blocks,
+      local_map_voxels,
       static_cast<unsigned long long>(lidar_rx),
       static_cast<unsigned long long>(lidar_processed),
       static_cast<unsigned long long>(lidar_drop_overflow),
@@ -2289,7 +2502,6 @@ public:
   double pdr_step_min_interval_s_;
   double pdr_step_max_interval_s_;
   double pdr_step_min_peak_valley_diff_;
-  double pdr_step_weinberg_k_;
   double last_pdr_downsample_time_s_ = -1.0;
   std::uint64_t next_pdr_sample_id_ = 0;
   bool updater_enable_;
@@ -2303,7 +2515,11 @@ public:
   double updater_convergence_delta_pos_m_;
   double updater_convergence_delta_rot_rad_;
   bool updater_degeneracy_enable_;
+  bool updater_degeneracy_log_only_;
   double updater_degeneracy_trigger_ratio_;
+  double updater_degeneracy_min_eigenvalue_threshold_;
+  int updater_degeneracy_poor_match_min_correspondences_;
+  double updater_degeneracy_poor_match_rmse_threshold_;
   double updater_degeneracy_relative_scale_;
   double updater_degeneracy_abs_floor_;
   double updater_degeneracy_min_weight_;
@@ -2321,8 +2537,12 @@ public:
   bool keyframe_enable_;
   double keyframe_translation_thresh_m_;
   double keyframe_rotation_thresh_deg_;
+  double keyframe_time_thresh_s_;
   int keyframe_backend_max_cached_;
   int keyframe_backend_max_archive_cached_;
+  int local_map_active_recent_count_;
+  double local_map_active_radius_m_;
+  int local_map_active_max_keyframes_;
   bool loop_enable_;
   bool backend_optimize_enable_;
   int loop_min_keyframes_before_loop_;
@@ -2369,6 +2589,7 @@ public:
   std::ofstream pdr_step_candidate_ofs_;
   std::ofstream pdr_step_event_ofs_;
   std::ofstream time_scan_ofs_;
+  std::ofstream degeneracy_iter_log_ofs_;
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   rclcpp::TimerBase::SharedPtr status_timer_;
   nav_msgs::msg::Path path_msg_;
@@ -2435,6 +2656,11 @@ public:
   iekf_lio::LoopRegistration loop_registration_;
   iekf_lio::ScanContextManager scan_context_manager_;
   std::deque<KeyframeData> keyframe_queue_;
+  std::deque<KeyframeData> frontend_keyframe_history_;
+  std::deque<KeyframeData> local_map_active_keyframes_;
+  std::unordered_set<std::size_t> local_map_active_keyframe_ids_;
+  std::unordered_map<std::size_t, std::vector<iekf_lio::VoxelMap::VoxelContribution>>
+  keyframe_voxel_cache_;
   std::deque<KeyframeData> backend_keyframes_;
   std::deque<std::size_t> backend_keyframe_archive_order_;
   std::unordered_map<std::size_t, KeyframeData> backend_keyframe_archive_;
