@@ -52,33 +52,29 @@ Eigen::Matrix3d expSO3(const Eigen::Vector3d & theta)
 #endif
 }
 
-bool fitPlaneFromVoxelNeighbors(
-  const std::vector<VoxelMap::NearbyVoxel> & voxels,
+bool fitPlaneFromNeighborPoints(
+  const std::vector<Eigen::Vector3d> & points_w,
   double max_eigen_ratio,
   Eigen::Vector3d * normal,
   Eigen::Vector3d * centroid)
 {
-  if (normal == nullptr || centroid == nullptr || voxels.size() < 3) {
+  if (normal == nullptr || centroid == nullptr || points_w.size() < 3) {
     return false;
   }
 
-  Eigen::Vector3d total_sum = Eigen::Vector3d::Zero();
-  Eigen::Matrix3d total_sum_outer = Eigen::Matrix3d::Zero();
-  std::size_t total_count = 0;
-  for (const auto & voxel : voxels) {
-    total_sum += voxel.sum_w;
-    total_sum_outer += voxel.sum_outer_w;
-    total_count += voxel.count;
+  Eigen::Vector3d c = Eigen::Vector3d::Zero();
+  for (const auto & pt : points_w) {
+    c += pt;
   }
-  if (total_count < 3) {
-    return false;
-  }
+  c /= static_cast<double>(points_w.size());
 
-  const Eigen::Vector3d c = total_sum / static_cast<double>(total_count);
-  Eigen::Matrix3d cov =
-    (total_sum_outer - static_cast<double>(total_count) * c * c.transpose());
-  if (total_count > 1) {
-    cov /= static_cast<double>(total_count - 1);
+  Eigen::Matrix3d cov = Eigen::Matrix3d::Zero();
+  for (const auto & pt : points_w) {
+    const Eigen::Vector3d d = pt - c;
+    cov.noalias() += d * d.transpose();
+  }
+  if (points_w.size() > 1) {
+    cov /= static_cast<double>(points_w.size() - 1);
   }
   cov = 0.5 * (cov + cov.transpose());
 
@@ -102,7 +98,7 @@ bool fitPlaneFromVoxelNeighbors(
 
 bool IekfUpdater::updatePoseWithPointToMap(
   const LidarScanXYZ & scan_i_end,
-  const VoxelMap & voxel_map_w,
+  const TreePointMap & map_w,
   IekfState18 & state,
   IekfUpdateResult * result) const
 {
@@ -157,7 +153,7 @@ bool IekfUpdater::updatePoseWithPointToMap(
       std::uint64_t radius_search_ns_local = 0;
       std::uint64_t plane_fit_ns_local = 0;
       std::uint64_t accumulate_ns_local = 0;
-      std::vector<VoxelMap::NearbyVoxel> neighbors;
+      std::vector<Eigen::Vector3d> neighbors;
       neighbors.reserve(static_cast<std::size_t>(k_neighbors));
 
 #pragma omp for schedule(static)
@@ -176,7 +172,7 @@ bool IekfUpdater::updatePoseWithPointToMap(
         const Eigen::Vector3d p_w = state.x.r_wb * p_i + state.x.p_wb;
 
         const auto radius_search_t0 = SteadyClock::now();
-        const std::size_t found = voxel_map_w.radiusSearchVoxels(
+        const std::size_t found = map_w.radiusSearchPoints(
           p_w, search_radius, static_cast<std::size_t>(k_neighbors), &neighbors);
         radius_search_ns_local += static_cast<std::uint64_t>(
           std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -188,7 +184,7 @@ bool IekfUpdater::updatePoseWithPointToMap(
         Eigen::Vector3d n_w = Eigen::Vector3d::Zero();
         Eigen::Vector3d c_w = Eigen::Vector3d::Zero();
         const auto plane_fit_t0 = SteadyClock::now();
-        if (!fitPlaneFromVoxelNeighbors(neighbors, config_.plane_max_eigen_ratio, &n_w, &c_w)) {
+        if (!fitPlaneFromNeighborPoints(neighbors, config_.plane_max_eigen_ratio, &n_w, &c_w)) {
           plane_fit_ns_local += static_cast<std::uint64_t>(
             std::chrono::duration_cast<std::chrono::nanoseconds>(
               SteadyClock::now() - plane_fit_t0).count());

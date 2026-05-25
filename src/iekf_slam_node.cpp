@@ -39,7 +39,7 @@
 #include "mapping/keyframe_manager.hpp"
 #include "mapping/loop_registration.hpp"
 #include "mapping/scan_context_manager.hpp"
-#include "mapping/voxel_map.hpp"
+#include "mapping/tree_point_map.hpp"
 #include "pdr/pdr_types.hpp"
 #include "livox_ros_driver2/msg/custom_msg.hpp"
 #include "nav_msgs/msg/odometry.hpp"
@@ -286,11 +286,6 @@ public:
     updater_cfg.degeneracy_abs_floor = std::max(1e-12, updater_degeneracy_abs_floor_);
     updater_cfg.degeneracy_min_weight = std::clamp(updater_degeneracy_min_weight_, 0.0, 1.0);
     iekf_updater_.setConfig(updater_cfg);
-    voxel_map_.setVoxelSize(map_voxel_size_);
-    voxel_map_.setBlockSize(map_block_size_);
-    voxel_map_.setMaxBlocks(static_cast<std::size_t>(std::max(1, map_history_max_blocks_)));
-    voxel_map_.setHistoryWindowEnabled(map_history_enable_);
-    voxel_map_.setHistoryWindow(map_history_radius_xy_, map_history_half_height_);
     iekf_lio::KeyframeManagerConfig keyframe_cfg;
     keyframe_cfg.enable = keyframe_enable_;
     keyframe_cfg.translation_thresh_m = std::max(0.0, keyframe_translation_thresh_m_);
@@ -472,20 +467,40 @@ public:
     frontend_keyframe_history_.push_back(keyframe);
   }
 
-  void cacheKeyframeVoxelContributions(const KeyframeData & keyframe)
+  pcl::PointCloud<pcl::PointXYZ>::Ptr buildWorldPointCloudFromKeyframes(
+    const std::deque<KeyframeData> & keyframes) const
   {
-    if (keyframe_voxel_cache_.find(keyframe.id) != keyframe_voxel_cache_.end()) {
-      return;
+    auto cloud_w = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    std::size_t reserve_points = 0;
+    for (const auto & keyframe : keyframes) {
+      if (keyframe.cloud_i != nullptr) {
+        reserve_points += keyframe.cloud_i->size();
+      }
+    }
+    cloud_w->reserve(reserve_points);
+
+    for (const auto & keyframe : keyframes) {
+      if (keyframe.cloud_i == nullptr) {
+        continue;
+      }
+      for (const auto & pt_i : keyframe.cloud_i->points) {
+        if (!std::isfinite(pt_i.x) || !std::isfinite(pt_i.y) || !std::isfinite(pt_i.z)) {
+          continue;
+        }
+        const Eigen::Vector3d p_i(pt_i.x, pt_i.y, pt_i.z);
+        const Eigen::Vector3d p_w = keyframe.r_wb * p_i + keyframe.p_wb;
+        pcl::PointXYZ pt_w;
+        pt_w.x = static_cast<float>(p_w.x());
+        pt_w.y = static_cast<float>(p_w.y());
+        pt_w.z = static_cast<float>(p_w.z());
+        cloud_w->push_back(pt_w);
+      }
     }
 
-    if (keyframe.cloud_i == nullptr || keyframe.cloud_i->empty()) {
-      keyframe_voxel_cache_.emplace(
-        keyframe.id, std::vector<iekf_lio::VoxelMap::VoxelContribution> {});
-      return;
-    }
-
-    keyframe_voxel_cache_[keyframe.id] = voxel_map_.buildTransformedScanContributions(
-      *keyframe.cloud_i, keyframe.r_wb, keyframe.p_wb);
+    cloud_w->width = static_cast<std::uint32_t>(cloud_w->size());
+    cloud_w->height = 1;
+    cloud_w->is_dense = false;
+    return cloud_w;
   }
 
   std::deque<KeyframeData> selectActiveKeyframes(
@@ -577,7 +592,7 @@ public:
   {
     const std::deque<KeyframeData> selected = selectActiveKeyframes(center_w);
     if (selected.empty()) {
-      voxel_map_.clear();
+      tree_point_map_.clear();
       local_map_active_keyframes_.clear();
       local_map_active_keyframe_ids_.clear();
       local_map_initialized_ = false;
@@ -590,30 +605,10 @@ public:
       new_active_ids.insert(keyframe.id);
     }
 
-    for (const auto & active_id : local_map_active_keyframe_ids_) {
-      if (new_active_ids.count(active_id) != 0U) {
-        continue;
-      }
-      const auto cache_it = keyframe_voxel_cache_.find(active_id);
-      if (cache_it != keyframe_voxel_cache_.end()) {
-        voxel_map_.removeVoxelContributions(cache_it->second);
-      }
-    }
-
-    for (const auto & keyframe : selected) {
-      if (local_map_active_keyframe_ids_.count(keyframe.id) != 0U) {
-        continue;
-      }
-      cacheKeyframeVoxelContributions(keyframe);
-      const auto cache_it = keyframe_voxel_cache_.find(keyframe.id);
-      if (cache_it != keyframe_voxel_cache_.end()) {
-        voxel_map_.addVoxelContributions(cache_it->second);
-      }
-    }
-
     local_map_active_keyframes_ = selected;
     local_map_active_keyframe_ids_ = std::move(new_active_ids);
-    local_map_initialized_ = voxel_map_.size() > 0;
+    tree_point_map_.setInputCloud(buildWorldPointCloudFromKeyframes(local_map_active_keyframes_));
+    local_map_initialized_ = tree_point_map_.size() > 0;
   }
 
 #if 0
@@ -1130,8 +1125,7 @@ public:
       frontend_keyframe_history_.clear();
       local_map_active_keyframes_.clear();
       local_map_active_keyframe_ids_.clear();
-      keyframe_voxel_cache_.clear();
-      voxel_map_.clear();
+      tree_point_map_.clear();
       local_map_initialized_ = false;
       iekf_state_.x.r_wb = imu_init_result.initial_r_wb;
       iekf_state_.x.b_g = imu_init_result.gyro_bias;
@@ -1208,7 +1202,7 @@ public:
         const auto update_t0 = SteadyClock::now();
         used_update = iekf_updater_.updatePoseWithPointToMap(
           scan_for_update,
-          voxel_map_,
+          tree_point_map_,
           iekf_state_,
           &upd);
         update_search_ns = upd.radius_search_ns;
@@ -1242,7 +1236,6 @@ public:
         iekf_state_.x.p_wb,
         iekf_state_.x.r_wb,
         scan_for_map);
-      cacheKeyframeVoxelContributions(keyframe);
       appendActiveKeyframe(keyframe);
       enqueueKeyframe(keyframe);
     }
@@ -1257,7 +1250,7 @@ public:
     }
     map_ns = map_insert_ns;
 
-    map_voxels = voxel_map_.size();
+    map_voxels = tree_point_map_.size();
 
     last_history_blocks_.store(map_voxels);
 
@@ -1294,7 +1287,7 @@ public:
 
     RCLCPP_INFO(
       this->get_logger(),
-      "Scheduled one scan: [%.3f, %.3f], imu_in_window=%zu, points=%zu->%zu, deskew_enable=%s, downsample(update=%zu map=%zu), used_update=%s, update_skip=%s, local_map_voxels=%zu selected_map_voxels=%zu active_keyframes=%zu keyframe=%s dt=%.3f trans=%.3f rot_deg=%.2f map_ms(rebuild=%.2f total=%.2f), pred_p=(%.3f,%.3f,%.3f), pred_v=(%.3f,%.3f,%.3f), pred_rpy_rad=(%.3f,%.3f,%.3f)",
+      "Scheduled one scan: [%.3f, %.3f], imu_in_window=%zu, points=%zu->%zu, deskew_enable=%s, downsample(update=%zu map=%zu), used_update=%s, update_skip=%s, local_map_points=%zu selected_map_points=%zu active_keyframes=%zu keyframe=%s dt=%.3f trans=%.3f rot_deg=%.2f map_ms(rebuild=%.2f total=%.2f), pred_p=(%.3f,%.3f,%.3f), pred_v=(%.3f,%.3f,%.3f), pred_rpy_rad=(%.3f,%.3f,%.3f)",
       stampToSec(scan_begin_time),
       stampToSec(scan_end_time),
       imu_track_internal.size(),
@@ -1305,7 +1298,7 @@ public:
       scan_for_map.points == nullptr ? 0U : scan_for_map.points->size(),
       used_update ? "true" : "false",
       update_skip_reason.c_str(),
-      voxel_map_.size(),
+      tree_point_map_.size(),
       map_voxels,
       local_map_active_keyframes_.size(),
       keyframe_decision.is_keyframe ? "true" : "false",
@@ -1938,7 +1931,7 @@ public:
         "# scan_end_time_s prep_ms predict_ms predict_prop_ms predict_cov_ms predict_record_ms "
         "deskew_ms deskew_end_interp_ms deskew_point_interp_ms deskew_point_tf_ms deskew_merge_ms "
         "downsample_ms update_ms update_search_ms update_plane_ms update_accumulate_ms update_solve_ms "
-        "map_insert_ms map_prune_ms publish_ms total_ms local_map_voxels is_keyframe total_keyframes\n";
+        "map_insert_ms map_prune_ms publish_ms total_ms local_map_points is_keyframe total_keyframes\n";
       if (updater_degeneracy_log_only_) {
         degeneracy_iter_log_ofs_ <<
           "scan_timestamp,iekf_iter,valid_correspondences,residual_rmse,"
@@ -2378,7 +2371,7 @@ public:
 
     RCLCPP_INFO(
       this->get_logger(),
-      "input buffers: imu=%zu lidar=%zu latest_imu=%.3f latest_lidar=%.3f | map: local_map_voxels=%zu | lidar_rx=%llu proc=%llu drop_overflow=%llu(win=%.2f%% total=%.2f%%) drop_stale=%llu drop_reflectivity=%llu | stage_ms_per_scan(win): prep=%.2f predict=%.2f deskew=%.2f downsample=%.2f update=%.2f map_tf=%.2f map_insert=%.2f map_prune=%.2f map=%.2f publish=%.2f total=%.2f",
+      "input buffers: imu=%zu lidar=%zu latest_imu=%.3f latest_lidar=%.3f | map: local_map_points=%zu | lidar_rx=%llu proc=%llu drop_overflow=%llu(win=%.2f%% total=%.2f%%) drop_stale=%llu drop_reflectivity=%llu | stage_ms_per_scan(win): prep=%.2f predict=%.2f deskew=%.2f downsample=%.2f update=%.2f map_tf=%.2f map_insert=%.2f map_prune=%.2f map=%.2f publish=%.2f total=%.2f",
       imu_size,
       lidar_size,
       stampToSec(latest_imu_stamp_),
@@ -2664,7 +2657,7 @@ public:
   iekf_lio::IekfUpdater iekf_updater_;
   iekf_lio::IekfState18 iekf_state_;
   iekf_lio::CloudDeskewer deskewer_;
-  iekf_lio::VoxelMap voxel_map_;
+  iekf_lio::TreePointMap tree_point_map_;
   iekf_lio::BackendFactorGraph backend_factor_graph_;
   iekf_lio::KeyframeManager keyframe_manager_;
   iekf_lio::LoopRegistration loop_registration_;
@@ -2673,8 +2666,6 @@ public:
   std::deque<KeyframeData> frontend_keyframe_history_;
   std::deque<KeyframeData> local_map_active_keyframes_;
   std::unordered_set<std::size_t> local_map_active_keyframe_ids_;
-  std::unordered_map<std::size_t, std::vector<iekf_lio::VoxelMap::VoxelContribution>>
-  keyframe_voxel_cache_;
   std::deque<KeyframeData> backend_keyframes_;
   std::deque<std::size_t> backend_keyframe_archive_order_;
   std::unordered_map<std::size_t, KeyframeData> backend_keyframe_archive_;

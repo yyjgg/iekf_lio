@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "iekf/iekf_state.hpp"
-#include "mapping/voxel_map.hpp"
+#include "mapping/tree_point_map.hpp"
 #include "types.hpp"
 
 namespace iekf_lio
@@ -15,7 +15,7 @@ namespace iekf_lio
 struct IekfUpdaterConfig
 {
   int max_iterations = 2;
-  double max_correspondence_distance = 1.0;  // meter, hash-voxel radius search gate
+  double max_correspondence_distance = 1.0;  // meter, local-map radius search gate
   int plane_k_neighbors = 10;
   double plane_max_eigen_ratio = 0.15;       // planarity check: lambda0/lambda1
   double sigma_point_to_plane = 0.2;         // meter
@@ -90,7 +90,7 @@ public:
 
   bool updatePoseWithPointToMap(
     const LidarScanXYZ & scan_i_end,
-    const VoxelMap & voxel_map_w,
+    const TreePointMap & map_w,
     IekfState18 & state,
     IekfUpdateResult * result = nullptr) const;
 
