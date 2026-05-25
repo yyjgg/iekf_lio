@@ -117,6 +117,7 @@ public:
     updater_sigma_plane_ = this->declare_parameter<double>("updater.sigma_point_to_plane", 0.2);
     updater_max_abs_residual_ = this->declare_parameter<double>("updater.max_abs_point_to_plane_residual", 0.5);
     updater_max_update_points_ = this->declare_parameter<int>("updater.max_update_points", 1200);
+    updater_min_correspondences_ = this->declare_parameter<int>("updater.min_correspondences", 0);
     updater_convergence_delta_pos_m_ = this->declare_parameter<double>(
       "updater.convergence_delta_pos_m", 1e-3);
     updater_convergence_delta_rot_rad_ = this->declare_parameter<double>(
@@ -269,6 +270,7 @@ public:
     updater_cfg.sigma_point_to_plane = std::max(1e-3, updater_sigma_plane_);
     updater_cfg.max_abs_point_to_plane_residual = std::max(1e-3, updater_max_abs_residual_);
     updater_cfg.max_update_points = std::max(100, updater_max_update_points_);
+    updater_cfg.min_correspondences = std::max(0, updater_min_correspondences_);
     updater_cfg.convergence_delta_pos_m = std::max(0.0, updater_convergence_delta_pos_m_);
     updater_cfg.convergence_delta_rot_rad = std::max(0.0, updater_convergence_delta_rot_rad_);
     updater_cfg.degeneracy_projection_enable = updater_degeneracy_enable_;
@@ -1214,7 +1216,15 @@ public:
         update_accumulate_ns = upd.accumulate_ns;
         update_solve_ns = upd.solve_ns;
         if (!used_update) {
-          update_skip_reason = "update_rejected";
+          if (
+            updater_min_correspondences_ > 0 &&
+            upd.correspondences > 0 &&
+            upd.correspondences < static_cast<std::size_t>(updater_min_correspondences_))
+          {
+            update_skip_reason = "too_few_correspondences";
+          } else {
+            update_skip_reason = "update_rejected";
+          }
         }
         update_ns = static_cast<std::uint64_t>(
           std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - update_t0).count());
@@ -1268,6 +1278,8 @@ public:
           << (iter_log.weak_abs ? 1 : 0) << ","
           << (iter_log.bad_quality ? 1 : 0) << ","
           << (iter_log.is_degenerate_raw ? 1 : 0) << ","
+          << (iter_log.degeneracy_projection_triggered ? 1 : 0) << ","
+          << (iter_log.too_few_correspondences ? 1 : 0) << ","
           << iter_log.threshold_ref << ","
           << iter_log.weights[0] << ","
           << iter_log.weights[1] << ","
@@ -1932,6 +1944,7 @@ public:
           "scan_timestamp,iekf_iter,valid_correspondences,residual_rmse,"
           "lambda_min,lambda_max,lambda_ratio,condition_number,"
           "bad_ratio,weak_abs,bad_quality,is_degenerate_raw,"
+          "degeneracy_projection_triggered,too_few_correspondences,"
           "threshold_ref,weight_0,weight_1,weight_2,weight_3,weight_4,weight_5,"
           "update_dx_rot_norm,update_dx_pos_norm\n";
       }
@@ -2512,6 +2525,7 @@ public:
   double updater_sigma_plane_;
   double updater_max_abs_residual_;
   int updater_max_update_points_;
+  int updater_min_correspondences_;
   double updater_convergence_delta_pos_m_;
   double updater_convergence_delta_rot_rad_;
   bool updater_degeneracy_enable_;

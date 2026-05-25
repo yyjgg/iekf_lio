@@ -120,6 +120,8 @@ bool IekfUpdater::updatePoseWithPointToMap(
   const double inv_sigma2 = 1.0 / sigma2;
   const double max_abs_residual = std::max(1e-3, config_.max_abs_point_to_plane_residual);
   const std::size_t max_points = static_cast<std::size_t>(std::max(10, config_.max_update_points));
+  const std::size_t min_correspondences =
+    static_cast<std::size_t>(std::max(0, config_.min_correspondences));
   const std::size_t total_points = scan_i_end.points->size();
   const std::size_t stride = std::max<std::size_t>(1, (total_points + max_points - 1) / max_points);
   constexpr int kGeomDim = 6;
@@ -247,6 +249,14 @@ bool IekfUpdater::updatePoseWithPointToMap(
       result->iterations = iter + 1;
     }
 
+    if (corr < min_correspondences) {
+      iter_log.too_few_correspondences = true;
+      if (result != nullptr && config_.degeneracy_projection_log_only) {
+        result->iter_logs.push_back(iter_log);
+      }
+      break;
+    }
+
     if (config_.degeneracy_projection_enable || config_.degeneracy_projection_log_only) {
       Eigen::Matrix<double, kGeomDim, kGeomDim> lambda_g =
         Eigen::Matrix<double, kGeomDim, kGeomDim>::Zero();
@@ -280,6 +290,8 @@ bool IekfUpdater::updatePoseWithPointToMap(
           config_.degeneracy_abs_floor,
           config_.degeneracy_relative_scale * lambda_max);
 
+        const bool geometric_degenerate = ratio_bad && absolute_small;
+
         if (result != nullptr) {
           result->lambda_min = lambda_min;
           result->lambda_max = lambda_max;
@@ -288,7 +300,7 @@ bool IekfUpdater::updatePoseWithPointToMap(
           result->bad_ratio = ratio_bad;
           result->weak_abs = absolute_small;
           result->bad_quality = poor_match;
-          result->is_degenerate_raw = ratio_bad && absolute_small && poor_match;
+          result->is_degenerate_raw = geometric_degenerate;
           result->threshold_ref = threshold_ref;
           result->weights = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
         }
@@ -299,7 +311,8 @@ bool IekfUpdater::updatePoseWithPointToMap(
         iter_log.bad_ratio = ratio_bad;
         iter_log.weak_abs = absolute_small;
         iter_log.bad_quality = poor_match;
-        iter_log.is_degenerate_raw = ratio_bad && absolute_small && poor_match;
+        iter_log.is_degenerate_raw = geometric_degenerate;
+        iter_log.degeneracy_projection_triggered = geometric_degenerate;
         iter_log.threshold_ref = threshold_ref;
 
         // In both "enable" and "log_only" modes we fully run the candidate
@@ -307,7 +320,7 @@ bool IekfUpdater::updatePoseWithPointToMap(
         // so the logged weights and projected geometry reflect the real
         // projection behavior. Only the final write-back into the LiDAR
         // information system is gated by `enable && !log_only`.
-        if (ratio_bad && absolute_small && poor_match)
+        if (geometric_degenerate)
         {
           const double lambda_ref = threshold_ref;
 

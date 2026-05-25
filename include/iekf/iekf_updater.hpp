@@ -21,6 +21,7 @@ struct IekfUpdaterConfig
   double sigma_point_to_plane = 0.2;         // meter
   double max_abs_point_to_plane_residual = 0.5;  // meter
   int max_update_points = 1200;
+  int min_correspondences = 0;
   double convergence_delta_pos_m = 1e-3;
   double convergence_delta_rot_rad = 1e-4;
   bool degeneracy_projection_enable = true;
@@ -49,6 +50,8 @@ struct IekfUpdateResult
     bool weak_abs = false;
     bool bad_quality = false;
     bool is_degenerate_raw = false;
+    bool degeneracy_projection_triggered = false;
+    bool too_few_correspondences = false;
     double threshold_ref = 0.0;
     std::array<double, 6> weights {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}};
     double update_dx_rot_norm = 0.0;

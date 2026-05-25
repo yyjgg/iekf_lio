@@ -14,10 +14,10 @@ iekf_slam_node:
     reflectivity_filter.min: 5
     reflectivity_filter.max: 255
     distance_filter.enable: true
-    distance_filter.min_m: 2.0
-    distance_filter.max_m: 200.0
+    distance_filter.min_m: 0.8
+    distance_filter.max_m: 1000.0
     deskew.enable: true
-    deskew.max_input_points: 8000
+    deskew.max_input_points: 12000
     downsample.enable: true
     downsample.leaf_size: 0.4
     downsample.update_leaf_size: 0.5
@@ -76,23 +76,24 @@ iekf_slam_node:
     # -----------------------------
     updater.enable: true
     updater.max_iterations: 3 #每次扫描迭代优化的最大次数
-    updater.max_correspondence_distance: 0.4 #哈希体素半径搜索的范围，过大可能引入错误匹配，过小可能邻域不足
-    updater.plane_k_neighbors: 5 #每个特征点寻找平面特征时的邻域点数量，过大可能引入非平面点，过小可能平面拟合不稳定
-    updater.plane_max_eigen_ratio: 0.2 #允许的最大平面特征点邻域内的最大特征值与次大特征值的比值，过大可能不是平面，过小可能是边界
-    updater.sigma_point_to_plane: 0.2 #点到平面残差的标准差，用于更新过程的噪声矩阵R，过大可能匹配不足，过小可能引入错误匹配，现在采用的是固定值
-    updater.max_abs_point_to_plane_residual: 0.7 #点到平面残差的绝对值最大值，过大可能引入错误匹配，过小可能匹配不足
-    updater.max_update_points: 1500 #每次迭代优化中使用的最大点数，控制优化的计算量，过大可能导致优化过慢，过小可能优化效果不好
+    updater.max_correspondence_distance: 0.4 #哈希体素半径搜索的范围，先略收紧以减少跨结构错配
+    updater.plane_k_neighbors: 5 #每个特征点寻找平面特征时的邻域点数量，先保持不变
+    updater.plane_max_eigen_ratio: 0.35 #平面判据收紧，降低伪平面被接受的概率
+    updater.sigma_point_to_plane: 0.2 #点到平面残差的标准差，先保持固定权重不变
+    updater.max_abs_point_to_plane_residual: 0.7 #收紧残差硬门限，优先滤掉明显错误匹配
+    updater.max_update_points: 3000 #每次迭代优化中使用的最大点数，控制优化的计算量，过大可能导致优化过慢，过小可能优化效果不好
+    updater.min_correspondences: 10 # 若当前帧有效匹配点数低于该阈值，则直接跳过本次LiDAR更新
     updater.convergence_delta_pos_m: 1.0e-3 # 单轮迭代的位置增量小于该阈值时可认为位置已收敛
     updater.convergence_delta_rot_rad: 1.0e-4 # 单轮迭代的姿态李代数增量小于该阈值时可认为姿态已收敛
-    updater.degeneracy_projection.enable: false # 是否开启基于观测信息矩阵特征方向的退化抑制
+    updater.degeneracy_projection.enable: false  # 是否开启基于观测信息矩阵特征方向的退化抑制
     updater.degeneracy_projection.log_only: true # 只计算和记录退化信息，不把退化投影真正并入状态更新
-    updater.degeneracy_projection.trigger_ratio: 0.02 # 条件1：最小/最大特征值比足够差
+    updater.degeneracy_projection.trigger_ratio: 0.03 # 条件1：更容易把明显单向退化识别出来
     updater.degeneracy_projection.min_eigenvalue_threshold: 1.0e-3 # 条件2：最小特征值绝对值也足够小
-    updater.degeneracy_projection.poor_match_min_correspondences: 80 # 条件3a：LiDAR有效匹配数量过少则认为匹配质量差
-    updater.degeneracy_projection.poor_match_rmse_threshold: 0.25 # 条件3b：LiDAR匹配RMSE过大则认为匹配质量差
-    updater.degeneracy_projection.relative_scale: 0.005 # 退化参考阈值相对最大特征值的比例
+    updater.degeneracy_projection.poor_match_min_correspondences: 60 # 日志诊断保留：当前不参与退化投影触发
+    updater.degeneracy_projection.poor_match_rmse_threshold: 0.20 # 日志诊断保留：当前不参与退化投影触发
+    updater.degeneracy_projection.relative_scale: 0.01 # 提高退化参考阈值，弱方向抑制更明显
     updater.degeneracy_projection.absolute_floor: 1.0e-6 # 退化参考阈值的绝对下限，避免全零信息时数值问题
-    updater.degeneracy_projection.min_weight: 0.3 # 退化方向最小保留权重，0表示可完全抑制
+    updater.degeneracy_projection.min_weight: 0.1 # 退化方向最小保留权重更低，允许更强抑制
 
     # -----------------------------
     # Local Map
@@ -147,8 +148,8 @@ iekf_slam_node:
     # -----------------------------
     # Runtime / OpenMP
     # -----------------------------
-    runtime.omp_num_threads: 20
-    runtime.omp_dynamic: false
+    runtime.omp_num_threads: 8
+    runtime.omp_dynamic: true
     runtime.omp_proc_bind: true
     runtime.omp_places: "cores"
 
