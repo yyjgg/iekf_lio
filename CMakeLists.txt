@@ -37,6 +37,7 @@ add_executable(iekf_slam_node
   src/lidar/cloud_deskewer.cpp
   src/mapping/backend_factor_graph.cpp
   src/mapping/keyframe_manager.cpp
+  third_party/ikd_tree/ikd_Tree.cpp
   src/mapping/loop_registration.cpp
   src/mapping/scan_context_manager.cpp
   src/mapping/tree_point_map.cpp
@@ -45,6 +46,7 @@ add_executable(iekf_slam_node
   src/iekf/iekf_updater.cpp
 )
 target_include_directories(iekf_slam_node PUBLIC include)
+target_include_directories(iekf_slam_node PUBLIC third_party/ikd_tree)
 target_include_directories(iekf_slam_node SYSTEM PUBLIC ${PCL_INCLUDE_DIRS})
 ament_target_dependencies(iekf_slam_node
   rclcpp

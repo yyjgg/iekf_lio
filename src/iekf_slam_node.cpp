@@ -155,6 +155,16 @@ public:
     map_history_enable_ = this->declare_parameter<bool>("local_map.history.enable", true);
     map_history_radius_xy_ = this->declare_parameter<double>("local_map.history.radius_xy", 120.0);
     map_history_half_height_ = this->declare_parameter<double>("local_map.history.half_height", 30.0);
+    local_map_incremental_cube_length_xy_ = this->declare_parameter<double>(
+      "local_map.incremental.cube_length_xy", 2.0 * std::max(1.0, map_history_radius_xy_));
+    local_map_incremental_cube_height_ = this->declare_parameter<double>(
+      "local_map.incremental.cube_height", 2.0 * std::max(1.0, map_history_half_height_));
+    local_map_incremental_move_threshold_ratio_ = this->declare_parameter<double>(
+      "local_map.incremental.move_threshold_ratio", 0.4);
+    local_map_ikd_delete_criterion_ = this->declare_parameter<double>(
+      "local_map.ikd_tree.delete_criterion", 0.5);
+    local_map_ikd_balance_criterion_ = this->declare_parameter<double>(
+      "local_map.ikd_tree.balance_criterion", 0.7);
     keyframe_enable_ = this->declare_parameter<bool>("keyframe.enable", true);
     keyframe_translation_thresh_m_ = this->declare_parameter<double>(
       "keyframe.translation_thresh_m", 0.5);
@@ -286,6 +296,9 @@ public:
     updater_cfg.degeneracy_abs_floor = std::max(1e-12, updater_degeneracy_abs_floor_);
     updater_cfg.degeneracy_min_weight = std::clamp(updater_degeneracy_min_weight_, 0.0, 1.0);
     iekf_updater_.setConfig(updater_cfg);
+    tree_point_map_.setDownsampleSize(std::max(1e-3, downsample_map_leaf_size_));
+    tree_point_map_.setDeleteCriterion(local_map_ikd_delete_criterion_);
+    tree_point_map_.setBalanceCriterion(local_map_ikd_balance_criterion_);
     iekf_lio::KeyframeManagerConfig keyframe_cfg;
     keyframe_cfg.enable = keyframe_enable_;
     keyframe_cfg.translation_thresh_m = std::max(0.0, keyframe_translation_thresh_m_);
@@ -501,6 +514,41 @@ public:
     cloud_w->height = 1;
     cloud_w->is_dense = false;
     return cloud_w;
+  }
+
+  void updateLocalMapIncremental(
+    const std::vector<Eigen::Vector3d> & scan_points_world,
+    const Eigen::Vector3d & current_center_w)
+  {
+    if (!local_map_center_initialized_) {
+      local_map_center_w_ = current_center_w;
+      local_map_center_initialized_ = true;
+    } else {
+      const double half_xy = 0.5 * std::max(1.0, local_map_incremental_cube_length_xy_);
+      const double half_z = 0.5 * std::max(1.0, local_map_incremental_cube_height_);
+      const double move_ratio = std::clamp(local_map_incremental_move_threshold_ratio_, 0.05, 0.95);
+      const bool need_shift =
+        std::abs(current_center_w.x() - local_map_center_w_.x()) > move_ratio * half_xy ||
+        std::abs(current_center_w.y() - local_map_center_w_.y()) > move_ratio * half_xy ||
+        std::abs(current_center_w.z() - local_map_center_w_.z()) > move_ratio * half_z;
+      if (need_shift) {
+        local_map_center_w_ = current_center_w;
+        tree_point_map_.deleteOutsideCube(
+          local_map_center_w_,
+          local_map_incremental_cube_length_xy_,
+          local_map_incremental_cube_height_);
+      }
+    }
+
+    if (!scan_points_world.empty()) {
+      tree_point_map_.addWorldPoints(scan_points_world, true);
+    }
+
+    tree_point_map_.deleteOutsideCube(
+      local_map_center_w_,
+      local_map_incremental_cube_length_xy_,
+      local_map_incremental_cube_height_);
+    local_map_initialized_ = tree_point_map_.size() > 0;
   }
 
   std::deque<KeyframeData> selectActiveKeyframes(
@@ -1125,6 +1173,8 @@ public:
       frontend_keyframe_history_.clear();
       local_map_active_keyframes_.clear();
       local_map_active_keyframe_ids_.clear();
+      local_map_center_w_.setZero();
+      local_map_center_initialized_ = false;
       tree_point_map_.clear();
       local_map_initialized_ = false;
       iekf_state_.x.r_wb = imu_init_result.initial_r_wb;
@@ -1236,18 +1286,15 @@ public:
         iekf_state_.x.p_wb,
         iekf_state_.x.r_wb,
         scan_for_map);
-      appendActiveKeyframe(keyframe);
       enqueueKeyframe(keyframe);
     }
 
-    if (keyframe_decision.is_keyframe) {
-      const auto map_insert_t0 = SteadyClock::now();
-      updateLocalMapByActiveKeyframeDiff(iekf_state_.x.p_wb);
-      map_insert_ns = static_cast<std::uint64_t>(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - map_insert_t0).count());
-    } else {
-      map_insert_ns = 0;
-    }
+    const std::vector<Eigen::Vector3d> scan_points_world =
+      transformDeskewedScanToWorld(scan_for_map, iekf_state_.x);
+    const auto map_insert_t0 = SteadyClock::now();
+    updateLocalMapIncremental(scan_points_world, iekf_state_.x.p_wb);
+    map_insert_ns = static_cast<std::uint64_t>(
+      std::chrono::duration_cast<std::chrono::nanoseconds>(SteadyClock::now() - map_insert_t0).count());
     map_ns = map_insert_ns;
 
     map_voxels = tree_point_map_.size();
@@ -2541,6 +2588,11 @@ public:
   bool map_history_enable_;
   double map_history_radius_xy_;
   double map_history_half_height_;
+  double local_map_incremental_cube_length_xy_;
+  double local_map_incremental_cube_height_;
+  double local_map_incremental_move_threshold_ratio_;
+  double local_map_ikd_delete_criterion_;
+  double local_map_ikd_balance_criterion_;
   bool keyframe_enable_;
   double keyframe_translation_thresh_m_;
   double keyframe_rotation_thresh_deg_;
@@ -2669,6 +2721,8 @@ public:
   std::deque<KeyframeData> backend_keyframes_;
   std::deque<std::size_t> backend_keyframe_archive_order_;
   std::unordered_map<std::size_t, KeyframeData> backend_keyframe_archive_;
+  Eigen::Vector3d local_map_center_w_ = Eigen::Vector3d::Zero();
+  bool local_map_center_initialized_ = false;
   bool local_map_initialized_ = false;
 
   builtin_interfaces::msg::Time latest_imu_stamp_;
