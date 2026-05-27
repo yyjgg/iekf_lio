@@ -1,9 +1,12 @@
 .vscode/
 bag/
 build/
+install/
 dist/
 *.codex
 log/
+__pycache__/
+*.pyc
 tum_format/
 output/
 pdroutput/
