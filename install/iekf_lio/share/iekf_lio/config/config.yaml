@@ -19,9 +19,9 @@ iekf_slam_node:
     deskew.enable: true
     deskew.max_input_points: 12000
     downsample.enable: true
-    downsample.leaf_size: 0.4
+    downsample.leaf_size: 0.5
     downsample.update_leaf_size: 0.5
-    downsample.map_leaf_size: 0.4
+    downsample.map_leaf_size: 0.5
 
     # -----------------------------
     # IMU Initialization
@@ -76,13 +76,13 @@ iekf_slam_node:
     # -----------------------------
     updater.enable: true
     updater.max_iterations: 3 #每次扫描迭代优化的最大次数
-    updater.max_correspondence_distance: 0.4 #哈希体素半径搜索的范围，先略收紧以减少跨结构错配
+    updater.max_correspondence_distance: 0.6 #邻域搜索半径，折中控制搜索开销与静止段配准约束
     updater.plane_k_neighbors: 5 #每个特征点寻找平面特征时的邻域点数量，先保持不变
-    updater.plane_max_eigen_ratio: 0.35 #平面判据收紧，降低伪平面被接受的概率
+    updater.plane_max_eigen_ratio: 0.5 #平面判据收紧，降低伪平面被接受的概率
     updater.sigma_point_to_plane: 0.2 #点到平面残差的标准差，先保持固定权重不变
-    updater.max_abs_point_to_plane_residual: 0.7 #收紧残差硬门限，优先滤掉明显错误匹配
-    updater.max_update_points: 3000 #每次迭代优化中使用的最大点数，控制优化的计算量，过大可能导致优化过慢，过小可能优化效果不好
-    updater.min_correspondences: 10 # 若当前帧有效匹配点数低于该阈值，则直接跳过本次LiDAR更新
+    updater.max_abs_point_to_plane_residual: 0.8 #收紧残差硬门限，优先滤掉明显错误匹配
+    updater.max_update_points: 2500 #每次迭代优化中使用的最大点数，适度恢复静止段和稀疏场景的约束数量
+    updater.min_correspondences: 6 # 若当前帧有效匹配点数低于该阈值，则直接跳过本次LiDAR更新
     updater.convergence_delta_pos_m: 1.0e-3 # 单轮迭代的位置增量小于该阈值时可认为位置已收敛
     updater.convergence_delta_rot_rad: 1.0e-4 # 单轮迭代的姿态李代数增量小于该阈值时可认为姿态已收敛
     updater.degeneracy_projection.enable: false  # 是否开启基于观测信息矩阵特征方向的退化抑制
@@ -98,21 +98,17 @@ iekf_slam_node:
     # -----------------------------
     # Local Map
     # -----------------------------
-    local_map.voxel_size: 0.4
-    local_map.block_size: 20.0
-    local_map.history.max_blocks: 200
-    local_map.history.enable: true
-    local_map.history.radius_xy: 200.0
-    local_map.history.half_height: 100.0
+    local_map.incremental.cube_length_xy: 120.0
+    local_map.incremental.cube_height: 60.0
+    local_map.incremental.move_threshold_ratio: 0.5
+    local_map.ikd_tree.delete_criterion: 0.5
+    local_map.ikd_tree.balance_criterion: 0.7
     keyframe.enable: true
     keyframe.translation_thresh_m: 0.5
     keyframe.rotation_thresh_deg: 10.0
     keyframe.time_thresh_s: 1.0
     keyframe.backend.max_cached: 200
     keyframe.backend.max_archive_cached: 1000
-    local_map.active.recent_count: 30
-    local_map.active.radius_m: 30.0 #浮点数和整数在yaml文件中不能混用
-    local_map.active.max_keyframes: 50
     loop.enable: false
     loop.min_keyframes_before_loop: 30
     loop.exclude_recent_keyframes: 30

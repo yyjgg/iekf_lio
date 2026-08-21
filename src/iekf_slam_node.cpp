@@ -17,7 +17,6 @@
 #include <string>
 #include <thread>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 #include <Eigen/Geometry>
@@ -149,16 +148,10 @@ public:
       "downsample.update_leaf_size", downsample_leaf_size_legacy);
     downsample_map_leaf_size_ = this->declare_parameter<double>(
       "downsample.map_leaf_size", std::max(1e-3, 0.5 * downsample_leaf_size_legacy));
-    map_voxel_size_ = this->declare_parameter<double>("local_map.voxel_size", 0.5);
-    map_block_size_ = this->declare_parameter<double>("local_map.block_size", 20.0);
-    map_history_max_blocks_ = this->declare_parameter<int>("local_map.history.max_blocks", 200);
-    map_history_enable_ = this->declare_parameter<bool>("local_map.history.enable", true);
-    map_history_radius_xy_ = this->declare_parameter<double>("local_map.history.radius_xy", 120.0);
-    map_history_half_height_ = this->declare_parameter<double>("local_map.history.half_height", 30.0);
     local_map_incremental_cube_length_xy_ = this->declare_parameter<double>(
-      "local_map.incremental.cube_length_xy", 2.0 * std::max(1.0, map_history_radius_xy_));
+      "local_map.incremental.cube_length_xy", 120.0);
     local_map_incremental_cube_height_ = this->declare_parameter<double>(
-      "local_map.incremental.cube_height", 2.0 * std::max(1.0, map_history_half_height_));
+      "local_map.incremental.cube_height", 60.0);
     local_map_incremental_move_threshold_ratio_ = this->declare_parameter<double>(
       "local_map.incremental.move_threshold_ratio", 0.4);
     local_map_ikd_delete_criterion_ = this->declare_parameter<double>(
@@ -176,12 +169,6 @@ public:
       "keyframe.backend.max_cached", 200);
     keyframe_backend_max_archive_cached_ = this->declare_parameter<int>(
       "keyframe.backend.max_archive_cached", 2000);
-    local_map_active_recent_count_ = this->declare_parameter<int>(
-      "local_map.active.recent_count", 30);
-    local_map_active_radius_m_ = this->declare_parameter<double>(
-      "local_map.active.radius_m", 30.0);
-    local_map_active_max_keyframes_ = this->declare_parameter<int>(
-      "local_map.active.max_keyframes", 30);
     loop_enable_ = this->declare_parameter<bool>("loop.enable", true);
     loop_min_keyframes_before_loop_ = this->declare_parameter<int>(
       "loop.min_keyframes_before_loop", 30);
@@ -480,46 +467,11 @@ public:
     frontend_keyframe_history_.push_back(keyframe);
   }
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr buildWorldPointCloudFromKeyframes(
-    const std::deque<KeyframeData> & keyframes) const
-  {
-    auto cloud_w = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
-    std::size_t reserve_points = 0;
-    for (const auto & keyframe : keyframes) {
-      if (keyframe.cloud_i != nullptr) {
-        reserve_points += keyframe.cloud_i->size();
-      }
-    }
-    cloud_w->reserve(reserve_points);
-
-    for (const auto & keyframe : keyframes) {
-      if (keyframe.cloud_i == nullptr) {
-        continue;
-      }
-      for (const auto & pt_i : keyframe.cloud_i->points) {
-        if (!std::isfinite(pt_i.x) || !std::isfinite(pt_i.y) || !std::isfinite(pt_i.z)) {
-          continue;
-        }
-        const Eigen::Vector3d p_i(pt_i.x, pt_i.y, pt_i.z);
-        const Eigen::Vector3d p_w = keyframe.r_wb * p_i + keyframe.p_wb;
-        pcl::PointXYZ pt_w;
-        pt_w.x = static_cast<float>(p_w.x());
-        pt_w.y = static_cast<float>(p_w.y());
-        pt_w.z = static_cast<float>(p_w.z());
-        cloud_w->push_back(pt_w);
-      }
-    }
-
-    cloud_w->width = static_cast<std::uint32_t>(cloud_w->size());
-    cloud_w->height = 1;
-    cloud_w->is_dense = false;
-    return cloud_w;
-  }
-
   void updateLocalMapIncremental(
     const std::vector<Eigen::Vector3d> & scan_points_world,
     const Eigen::Vector3d & current_center_w)
   {
+    bool shifted_cube = false;
     if (!local_map_center_initialized_) {
       local_map_center_w_ = current_center_w;
       local_map_center_initialized_ = true;
@@ -533,10 +485,7 @@ public:
         std::abs(current_center_w.z() - local_map_center_w_.z()) > move_ratio * half_z;
       if (need_shift) {
         local_map_center_w_ = current_center_w;
-        tree_point_map_.deleteOutsideCube(
-          local_map_center_w_,
-          local_map_incremental_cube_length_xy_,
-          local_map_incremental_cube_height_);
+        shifted_cube = true;
       }
     }
 
@@ -544,118 +493,12 @@ public:
       tree_point_map_.addWorldPoints(scan_points_world, true);
     }
 
-    tree_point_map_.deleteOutsideCube(
-      local_map_center_w_,
-      local_map_incremental_cube_length_xy_,
-      local_map_incremental_cube_height_);
-    local_map_initialized_ = tree_point_map_.size() > 0;
-  }
-
-  std::deque<KeyframeData> selectActiveKeyframes(
-    const Eigen::Vector3d & center_w) const
-  {
-    std::deque<KeyframeData> selected;
-    if (frontend_keyframe_history_.empty()) {
-      return selected;
+    if (shifted_cube) {
+      tree_point_map_.deleteOutsideCube(
+        local_map_center_w_,
+        local_map_incremental_cube_length_xy_,
+        local_map_incremental_cube_height_);
     }
-
-    const std::size_t max_active =
-      static_cast<std::size_t>(std::max(1, local_map_active_max_keyframes_));
-    const std::size_t recent_count =
-      static_cast<std::size_t>(std::max(0, local_map_active_recent_count_));
-    const double radius_m = std::max(0.0, local_map_active_radius_m_);
-    const double radius2 = radius_m * radius_m;
-
-    std::unordered_set<std::size_t> selected_ids;
-    selected_ids.reserve(max_active * 2);
-
-    const std::size_t take_recent = std::min(recent_count, frontend_keyframe_history_.size());
-    const auto recent_begin =
-      frontend_keyframe_history_.end() - static_cast<std::ptrdiff_t>(take_recent);
-    for (auto it = recent_begin; it != frontend_keyframe_history_.end(); ++it) {
-      if (selected.size() >= max_active) {
-        return selected;
-      }
-      selected.push_back(*it);
-      selected_ids.insert(it->id);
-    }
-
-    struct SpatialCandidate
-    {
-      double dist2 = 0.0;
-      const KeyframeData * keyframe = nullptr;
-    };
-
-    std::vector<SpatialCandidate> spatial_candidates;
-    spatial_candidates.reserve(frontend_keyframe_history_.size());
-    for (const auto & keyframe : frontend_keyframe_history_) {
-      if (selected_ids.count(keyframe.id) != 0U) {
-        continue;
-      }
-      const double dist2 = (keyframe.p_wb - center_w).squaredNorm();
-      if (dist2 <= radius2) {
-        spatial_candidates.push_back(SpatialCandidate {dist2, &keyframe});
-      }
-    }
-
-    std::sort(
-      spatial_candidates.begin(),
-      spatial_candidates.end(),
-      [](const SpatialCandidate & a, const SpatialCandidate & b) {
-        if (a.dist2 != b.dist2) {
-          return a.dist2 < b.dist2;
-        }
-        return a.keyframe->time_s < b.keyframe->time_s;
-      });
-
-    for (const auto & candidate : spatial_candidates) {
-      if (selected.size() >= max_active) {
-        break;
-      }
-      selected.push_back(*candidate.keyframe);
-      selected_ids.insert(candidate.keyframe->id);
-    }
-
-    return selected;
-  }
-
-  bool refreshActiveKeyframes(const Eigen::Vector3d & center_w)
-  {
-    const std::deque<KeyframeData> selected = selectActiveKeyframes(center_w);
-    if (selected.size() != local_map_active_keyframes_.size()) {
-      local_map_active_keyframes_ = selected;
-      return true;
-    }
-
-    for (std::size_t i = 0; i < selected.size(); ++i) {
-      if (selected[i].id != local_map_active_keyframes_[i].id) {
-        local_map_active_keyframes_ = selected;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void updateLocalMapByActiveKeyframeDiff(const Eigen::Vector3d & center_w)
-  {
-    const std::deque<KeyframeData> selected = selectActiveKeyframes(center_w);
-    if (selected.empty()) {
-      tree_point_map_.clear();
-      local_map_active_keyframes_.clear();
-      local_map_active_keyframe_ids_.clear();
-      local_map_initialized_ = false;
-      return;
-    }
-
-    std::unordered_set<std::size_t> new_active_ids;
-    new_active_ids.reserve(selected.size() * 2);
-    for (const auto & keyframe : selected) {
-      new_active_ids.insert(keyframe.id);
-    }
-
-    local_map_active_keyframes_ = selected;
-    local_map_active_keyframe_ids_ = std::move(new_active_ids);
-    tree_point_map_.setInputCloud(buildWorldPointCloudFromKeyframes(local_map_active_keyframes_));
     local_map_initialized_ = tree_point_map_.size() > 0;
   }
 
@@ -1171,8 +1014,6 @@ public:
       next_pdr_sample_id_ = 0;
       keyframe_manager_.reset();
       frontend_keyframe_history_.clear();
-      local_map_active_keyframes_.clear();
-      local_map_active_keyframe_ids_.clear();
       local_map_center_w_.setZero();
       local_map_center_initialized_ = false;
       tree_point_map_.clear();
@@ -1334,7 +1175,7 @@ public:
 
     RCLCPP_INFO(
       this->get_logger(),
-      "Scheduled one scan: [%.3f, %.3f], imu_in_window=%zu, points=%zu->%zu, deskew_enable=%s, downsample(update=%zu map=%zu), used_update=%s, update_skip=%s, local_map_points=%zu selected_map_points=%zu active_keyframes=%zu keyframe=%s dt=%.3f trans=%.3f rot_deg=%.2f map_ms(rebuild=%.2f total=%.2f), pred_p=(%.3f,%.3f,%.3f), pred_v=(%.3f,%.3f,%.3f), pred_rpy_rad=(%.3f,%.3f,%.3f)",
+      "Scheduled one scan: [%.3f, %.3f], imu_in_window=%zu, points=%zu->%zu, deskew_enable=%s, downsample(update=%zu map=%zu), used_update=%s, update_skip=%s, local_map_points=%zu total_keyframes=%zu keyframe=%s dt=%.3f trans=%.3f rot_deg=%.2f map_ms(rebuild=%.2f total=%.2f), pred_p=(%.3f,%.3f,%.3f), pred_v=(%.3f,%.3f,%.3f), pred_rpy_rad=(%.3f,%.3f,%.3f)",
       stampToSec(scan_begin_time),
       stampToSec(scan_end_time),
       imu_track_internal.size(),
@@ -1346,8 +1187,7 @@ public:
       used_update ? "true" : "false",
       update_skip_reason.c_str(),
       tree_point_map_.size(),
-      map_voxels,
-      local_map_active_keyframes_.size(),
+      frontend_keyframe_history_.size(),
       keyframe_decision.is_keyframe ? "true" : "false",
       keyframe_decision.delta_time_s,
       keyframe_decision.translation_m,
@@ -2582,12 +2422,6 @@ public:
   bool downsample_enable_;
   double downsample_update_leaf_size_;
   double downsample_map_leaf_size_;
-  double map_voxel_size_;
-  double map_block_size_;
-  int map_history_max_blocks_;
-  bool map_history_enable_;
-  double map_history_radius_xy_;
-  double map_history_half_height_;
   double local_map_incremental_cube_length_xy_;
   double local_map_incremental_cube_height_;
   double local_map_incremental_move_threshold_ratio_;
@@ -2599,9 +2433,6 @@ public:
   double keyframe_time_thresh_s_;
   int keyframe_backend_max_cached_;
   int keyframe_backend_max_archive_cached_;
-  int local_map_active_recent_count_;
-  double local_map_active_radius_m_;
-  int local_map_active_max_keyframes_;
   bool loop_enable_;
   bool backend_optimize_enable_;
   int loop_min_keyframes_before_loop_;
@@ -2716,8 +2547,6 @@ public:
   iekf_lio::ScanContextManager scan_context_manager_;
   std::deque<KeyframeData> keyframe_queue_;
   std::deque<KeyframeData> frontend_keyframe_history_;
-  std::deque<KeyframeData> local_map_active_keyframes_;
-  std::unordered_set<std::size_t> local_map_active_keyframe_ids_;
   std::deque<KeyframeData> backend_keyframes_;
   std::deque<std::size_t> backend_keyframe_archive_order_;
   std::unordered_map<std::size_t, KeyframeData> backend_keyframe_archive_;

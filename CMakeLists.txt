@@ -41,7 +41,6 @@ add_executable(iekf_slam_node
   src/mapping/loop_registration.cpp
   src/mapping/scan_context_manager.cpp
   src/mapping/tree_point_map.cpp
-  src/mapping/voxel_map.cpp
   src/iekf/iekf_predictor.cpp
   src/iekf/iekf_updater.cpp
 )
